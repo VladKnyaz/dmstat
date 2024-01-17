@@ -1,37 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { FC } from 'react';
+import './App.css';
+import { Button, Space, Input, Layout, Flex } from 'antd';
 
+const headerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    color: '#fff',
+    height: 64,
+    paddingInline: 48,
+    lineHeight: '64px',
+    backgroundColor: '#4096ff',
+};
+const contentStyle: React.CSSProperties = {
+    textAlign: 'center',
+    minHeight: 120,
+    lineHeight: '120px',
+    color: '#fff',
+    backgroundColor: '#0958d9',
+};
 
-function App() {
-  const [count, setCount] = useState(0)
+const footerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    color: '#fff',
+    backgroundColor: '#4096ff',
+};
+const App: FC = () => {
+    const { Header, Content, Footer } = Layout;
+    return (
+        <Layout>
+            <Header style={headerStyle}>Header</Header>
+            <Content style={contentStyle}>Content</Content>
+            <Footer style={footerStyle}>Footer</Footer>
+        </Layout>
+    );
+};
 
-  return (
-    <>
-    
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default App
+export default App;

@@ -1,0 +1,8 @@
+import { IsString } from "class-validator";
+
+export class CreateProjectDto {
+    @IsString()
+    projectName: string;
+    @IsString()
+    color: string;
+}

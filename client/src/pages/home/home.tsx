@@ -19,7 +19,10 @@ import {
   XAxis,
   LabelList,
   Legend,
+  Brush,
 } from "recharts";
+
+import { ChartColumnCurrentAmount } from "../../widgets/chartColumnCurrentAmount";
 
 const data2 = [
   { name: "majestic", amount: 32234, color: "red" },
@@ -39,47 +42,7 @@ const Home: FC = () => {
           <Flex justify="center" gap="middle" vertical align="center">
             <Title level={3}>Столбчатая диаграмма</Title>
           </Flex>
-          <ResponsiveContainer>
-            <BarChart data={data2} barSize={20}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-
-              <Tooltip cursor={{ fill: "transparent" }} content={<></>} />
-              <Bar
-                dataKey={"amount"}
-                onClick={(data) => {
-                  console.log(data);
-                }}
-              >
-                {data2.map((srv, index) => {
-                  return <Cell key={index} fill={srv.color}></Cell>;
-                })}
-                <LabelList
-                  dataKey={"amount"}
-                  position={"top"}
-                  style={{ fill: "white" }}
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-          <Flex gap={10} wrap="wrap">
-            {data2.map((srv, index) => {
-              return (
-                <Flex key={index} justify="center" align="center" gap={10}>
-                  <div
-                    style={{
-                      backgroundColor: srv.color,
-                      width: 20,
-                      height: 20,
-                    }}
-                  ></div>
-                  <Text>{srv.name}</Text>
-                  <Text strong>{srv.amount}</Text>
-                </Flex>
-              );
-            })}
-          </Flex>
+          <ChartColumnCurrentAmount/>
         </Col>
       </Row>
     </>

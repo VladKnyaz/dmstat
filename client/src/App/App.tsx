@@ -4,12 +4,13 @@ import { Layout } from "antd";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "../pages/home/";
 import { Menu } from "../widgets/menu";
-import { Chart } from "../widgets/chart";
-import { isMobile } from "react-device-detect";
+import { ChartLinePeaks } from "../widgets/chartLinePeaks";
+import { Admin } from "../pages/admin/";
+import { ChartLineCurrentAmount } from "../widgets/chartLineCurrentAmount";
+import { Project } from "../pages/project";
 
 const App: FC = () => {
-  const { Header, Content, Footer, Sider } = Layout;
-  const [collapse, setCollapse] = useState<boolean>(true);
+  const { Content } = Layout;
   return (
     <Layout className="container">
       <Menu />
@@ -22,7 +23,13 @@ const App: FC = () => {
       >
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/chart" element={<Chart />} />
+          <Route path="/chart" element={<ChartLinePeaks />} />
+          <Route path="/project/:projectName" element={<Project />} />
+          <Route
+            path="/chartCurrentOnline"
+            element={<ChartLineCurrentAmount />}
+          />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </Content>
     </Layout>

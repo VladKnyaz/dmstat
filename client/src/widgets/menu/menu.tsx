@@ -1,9 +1,10 @@
 import React, { FC } from "react";
-import { Flex, Menu as MenuAnt, MenuProps, Layout, theme, Button } from "antd";
+import { Menu as MenuAnt, MenuProps, Layout } from "antd";
 import {
   BarChartOutlined,
   HomeOutlined,
   MenuOutlined,
+  ProfileOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { BrowserView, MobileView } from "react-device-detect";
@@ -26,8 +27,15 @@ const Menu: FC = () => {
         },
         {
           key: 3,
-          label: <Link to={"/"}>Текущий онлайн проектов</Link>,
+          label: (
+            <Link to={"/chartCurrentOnline"}>Текущий онлайн проектов</Link>
+          ),
           icon: <BarChartOutlined />,
+        },
+        {
+          key: 4,
+          label: <Link to={"/admin"}>Админка</Link>,
+          icon: <ProfileOutlined />,
         },
       ],
     },

@@ -15,10 +15,11 @@ export class TimestampProjectEntity {
   @Column({ type: "timestamp" })
   date: Date;
 
-  @ManyToOne(() => ProjectEntity, (project) => project.timestamps)
+  @ManyToOne(() => ProjectEntity, (project) => project.timestamps, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "projectId" })
   project: ProjectEntity;
 
   @Column()
   peak: number;
+
 }

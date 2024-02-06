@@ -18,7 +18,7 @@ export class TimestampServerEntity {
   @Column()
   amountPlayers: number;
 
-  @ManyToOne(() => ServerEntity, (serv) => serv.timestamps)
+  @ManyToOne(() => ServerEntity, (serv) => serv.timestamps, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "serverId" })
   server: ServerEntity;
 }

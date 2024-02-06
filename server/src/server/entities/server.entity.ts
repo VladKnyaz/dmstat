@@ -17,12 +17,15 @@ export class ServerEntity {
   @Column()
   serverName: string;
 
+  @Column()
+  serverId: string;
+
   @OneToMany(() => TimestampServerEntity, (timestmp) => timestmp.server, {
     onDelete: "CASCADE",
   })
   timestamps: TimestampServerEntity[];
 
-  @ManyToOne(() => ProjectEntity, (project) => project.servers)
+  @ManyToOne(() => ProjectEntity, (project) => project.servers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "projectId" })
   project: ProjectEntity;
 }

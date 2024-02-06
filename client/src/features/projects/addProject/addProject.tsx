@@ -4,10 +4,10 @@ import { useAddProjectMutation } from "../../../entities/projects";
 
 const AddProject: FC = () => {
   const [form] = Form.useForm();
-  const [addProject, { isLoading }] = useAddProjectMutation();
+  const [addProject, { isLoading, isError }] = useAddProjectMutation();
 
   const createProject = async (kek: { projectName: string; color: string }) => {
-    let a = await addProject({
+    let pr = await addProject({
       color: kek.color,
       projectName: kek.projectName,
     });
@@ -42,7 +42,12 @@ const AddProject: FC = () => {
         <Input placeholder="HEX цвет ( #fff )" />
       </Form.Item>
       <Form.Item>
-        <Button htmlType="submit" type="primary" loading={isLoading}>
+        <Button
+          htmlType="submit"
+          type="primary"
+          disabled={isError}
+          loading={isLoading}
+        >
           Добавить
         </Button>
       </Form.Item>

@@ -8,6 +8,7 @@ import { ProjectService } from "src/project/project.service";
 import { Cron, Interval } from "@nestjs/schedule";
 import { IProject, IServerFromRagemp } from "src/shared/types";
 import { ProjectEntity } from "src/project/entities/project.entity";
+import { TimestampServerEntity } from "./entities/timestamp.entity";
 
 @Injectable()
 export class ServerService {
@@ -16,6 +17,8 @@ export class ServerService {
     private serverRepository: Repository<ServerEntity>,
     @Inject(forwardRef(() => ProjectService))
     private projectService: ProjectService,
+    @InjectRepository(TimestampServerEntity)
+    private timestampRepository: Repository<TimestampServerEntity>,
   ) { }
 
   async create(createServerDto: CreateServerDto) {
@@ -31,34 +34,55 @@ export class ServerService {
     return `This action returns a #${id} server`;
   }
 
-  update(id: number, updateServerDto: UpdateServerDto) {
-    return `This action updates a #${id} server`;
-  }
+  async checkingAllServersThereAreInDatabase() {
+    try {
+      let projects = await this.projectService.findAll(true)
+      projects.forEach(async (project) => {
+        let projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectName)
 
-  remove(id: number) {
-    return `This action removes a #${id} server`;
+        if (projectInRagempList.servers.length > project.servers.length) {
+          let amount = projectInRagempList.servers.length - project.servers.length;
+
+          for (let i = 0; i < amount - 1; i++) {
+            let len = projectInRagempList.servers.length;
+            let server = projectInRagempList.servers[len - i];
+            await this.create({ serverId: server.id, project, serverName: server.name })
+          }
+        }
+      })
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   /**
    * сохраняет в бд онлайн серверов проектов раз в 5 минут
    */
-  // @Interval(5 * 60 * 1000)
-  // @Interval(2000)
+  @Interval(5 * 60 * 1000)
   async saveTimestampServer() {
-    const projectsFromRagemp: IProject[] =
-      await this.projectService.getProjectsFromRagemp();
+    try {
+      await this.checkingAllServersThereAreInDatabase();
 
-    projectsFromRagemp.forEach(async (project) => {
-      const findProjectInDatabase: ProjectEntity = await this.projectService.findOne(
-        project.idInDatabase,
-      );
+      const projectsFromRagemp: IProject[] =
+        await this.projectService.getProjectsFromRagempByDatabase();
 
-      if (!findProjectInDatabase.servers) return;
+      projectsFromRagemp.forEach(async (project) => {
+        const findProjectInDatabase: ProjectEntity = await this.projectService.findOneById(
+          project.idInDatabase,
+        );
+        if (!findProjectInDatabase.servers) return;
 
-      findProjectInDatabase.servers.forEach((server: ServerEntity, index: number) => {
-        // console.log(server);
+        findProjectInDatabase.servers.forEach(async (server: ServerEntity, index: number) => {
 
+          let serverMp = project.servers.find(serv => serv.id === server.serverId)
+
+          let tmpstamp = this.timestampRepository.create({ date: new Date().toString(), server, amountPlayers: serverMp.players.amount })
+          await this.timestampRepository.save(tmpstamp);
+        });
       });
-    });
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 }

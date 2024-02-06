@@ -6,4 +6,6 @@ export class CreateServerDto {
     project: ProjectEntity;
     @IsString()
     serverName: string;
+    @IsString()
+    serverId: string;
 }

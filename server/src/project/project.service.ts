@@ -31,7 +31,7 @@ export class ProjectService {
     let projectInDatabase = await this.projectRepository.save(createProjectDto);
 
     projectFromRagemp.servers.forEach(server => {
-      this.serverService.create({ project: projectInDatabase, serverName: server.name })
+      this.serverService.create({ project: projectInDatabase, serverName: server.name, serverId: server.id })
     })
 
     return true;
@@ -41,11 +41,13 @@ export class ProjectService {
     const projectsFromRagemp: IProject[] = await this.httpService.axiosRef
       .get("https://cdn.rage.mp/master/v2/")
       .then((res) => res.data);
-
-    return projectsFromRagemp.find(project => project.servers[0].name.toLowerCase().includes(name.toLowerCase()))
+    if (projectsFromRagemp) {
+      return projectsFromRagemp.find(project => project.servers[0].name.toLowerCase().includes(name.toLowerCase()))
+    }
+    return;
   }
 
-  async getProjectsFromRagemp(): Promise<IProject[]> {
+  async getProjectsFromRagempByDatabase(): Promise<IProject[]> {
     const projects = await this.findAll();
 
     const projectsNames = projects.map((srv) => srv.projectName);
@@ -55,7 +57,7 @@ export class ProjectService {
       .then((res) => res.data);
 
     let projectsRagemp: IProject[] = [];
-
+    // добавление проекта в ответ функции
     projectsNames.forEach((name) => {
       let nameProject: string = name.toLowerCase();
 
@@ -73,15 +75,14 @@ export class ProjectService {
     });
 
     return projectsRagemp;
-    // console.log(new Date().toLocaleString());
   }
 
   /**
    * сохраняет в бд пиковый онлайн проекта в 23:59:59 за этот день
    */
   @Cron("59 59 23 * * * ")
-  async saveTimestampsProjects() {
-    const projectsFromRagemp: IProject[] = await this.getProjectsFromRagemp();
+  async savePeaksProjects() {
+    const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
 
     projectsFromRagemp.forEach(async (project) => {
       const projectFromDatabase = await this.projectRepository.findOne({
@@ -95,27 +96,37 @@ export class ProjectService {
         peak: project.players.peak,
         date,
       });
-
       this.timestampRepository.save(prj);
     });
   }
 
-  findAll() {
-    return this.projectRepository.find();
+  findAll(isRelations: boolean = false) {
+
+    let relationsArray = ["servers", "servers.timestamps", "timestamps"];
+
+    if (!isRelations) relationsArray = [];
+
+    return this.projectRepository.find({ relations: relationsArray });
   }
 
-  findOne(id: number, relations: boolean = true) {
+  findOneById(id: number) {
     return this.projectRepository.findOne({
       where: { id },
       relations: ["servers", "servers.timestamps", "timestamps"],
     });
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  findOneByName(projectName: string) {
+    return this.projectRepository.findOne({
+      where: { projectName },
+      relations: ["servers", "servers.timestamps", "timestamps"],
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(projectName: string) {
+    let project = await this.projectRepository.findOne({ where: { projectName } })
+
+    if (!project) return new HttpException('Проект не найден', HttpStatus.NOT_FOUND)
+    return this.projectRepository.remove(project)
   }
 }

@@ -10,6 +10,7 @@ import { TimestampServerEntity } from "./server/entities/timestamp.entity";
 import { ProjectEntity } from "./project/entities/project.entity";
 import { ScheduleModule } from "@nestjs/schedule";
 
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,8 +18,8 @@ import { ScheduleModule } from "@nestjs/schedule";
       host: "localhost",
       database: "dmstat",
       port: 3306,
-      username: "root",
-      password: "vlad000",
+      username: "admin",
+      password: "root",
       entities: [
         ServerEntity,
         TimestampProjectEntity,
@@ -34,4 +35,4 @@ import { ScheduleModule } from "@nestjs/schedule";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

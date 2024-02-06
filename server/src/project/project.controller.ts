@@ -6,38 +6,39 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { UpdateProjectDto } from "./dto/update-project.dto";
 import { Cron, Interval } from "@nestjs/schedule";
+import { DeleteProjectDto } from "./dto/delete-project.dto";
 
-@Controller("project")
+@Controller("projects")
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
 
-  @Post("create")
+  @Post("/create")
   async create(@Body() createProjectDto: CreateProjectDto) {
     return await this.projectService.create(createProjectDto);
   }
 
   @Get()
-  findAll() {
-    return this.projectService.findAll();
+  findAll(@Query() query: { isRelations: boolean }) {
+    console.log(query.isRelations)
+
+    return this.projectService.findAll(query.isRelations);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.projectService.findOne(+id);
+  @Get(":projectName")
+  async findOne(@Param("projectName") projectName: string) {
+
+
+    return this.projectService.findOneByName(projectName);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectService.update(+id, updateProjectDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.projectService.remove(+id);
+  @Delete("/delete")
+  remove(@Body() deleteProjectDto: DeleteProjectDto) {
+    return this.projectService.remove(deleteProjectDto.projectName);
   }
 }

@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import ApexChart from "react-apexcharts";
-import { IProject, IServer } from "../projects";
+import { IServer } from "../projects";
 
 const ChartLineServer: FC<{ server: IServer; color: string }> = ({
   server,
@@ -13,6 +13,7 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
   const chartOptions: ApexCharts.ApexOptions = {
     chart: {
       stacked: true,
+      height: 400,
       background: "none",
       id: server.serverId,
       type: "line",
@@ -71,8 +72,9 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
   const options2: ApexCharts.ApexOptions = {
     chart: {
       background: "none",
-      id: "daads",
-
+      id: server.serverName,
+      height: 100,
+      width: 650,
       type: "line",
       brush: {
         target: server.serverId,
@@ -177,14 +179,14 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
       {server && (
         <>
           <ApexChart
-            options={options2}
-            series={series}
-            height={100}
-          ></ApexChart>
-          <ApexChart
             options={chartOptions}
             series={series}
             height={400}
+          ></ApexChart>
+          <ApexChart
+            options={options2}
+            series={series}
+            height={100}
           ></ApexChart>
         </>
       )}

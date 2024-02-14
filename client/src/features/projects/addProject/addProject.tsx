@@ -1,20 +1,43 @@
 import React, { FC } from "react";
-import { Button, Form, Input, Tooltip, Typography } from "antd";
+import { Button, Form, Input, Tooltip, Typography, notification } from "antd";
 import { useAddProjectMutation } from "../../../entities/projects";
 
 const AddProject: FC = () => {
   const [form] = Form.useForm();
   const [addProject, { isLoading, isError }] = useAddProjectMutation();
+  const [api, contextHolder] = notification.useNotification();
 
-  const createProject = async (kek: { projectName: string; color: string }) => {
-    let pr = await addProject({
-      color: kek.color,
-      projectName: kek.projectName,
+  const openNotify = (title: string, text: string) => {
+    api.info({
+      message: title,
+      description: text,
+      placement: "topRight",
     });
+  };
+
+  const createProject = async (data: {
+    projectName: string;
+    color: string;
+  }) => {
+    let res = await addProject({
+      color: data.color,
+      projectName: data.projectName,
+    });
+    if ("error" in res) {
+      //@ts-ignore
+      openNotify("Ошибка", res.error);
+      return;
+    } else if ("message" in res.data) {
+      openNotify("Ответ от сервера", String(res.data.message));
+    } else {
+      openNotify("Проект добавлен", "");
+    }
   };
 
   return (
     <Form form={form} onFinish={createProject} layout="vertical">
+      {contextHolder}
+
       <Tooltip
         title={
           <>

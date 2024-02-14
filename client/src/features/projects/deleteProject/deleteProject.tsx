@@ -11,7 +11,6 @@ import {
   notification,
 } from "antd";
 
-import type { NotificationArgsProps } from "antd";
 
 import {
   useGetProjectsQuery,

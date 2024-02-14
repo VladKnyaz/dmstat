@@ -26,9 +26,11 @@ export class ProjectService {
   async create(createProjectDto: CreateProjectDto) {
     const projectFromRagemp: IProject = await this.getProjectFromRagemp(createProjectDto.projectName)
 
-    if (!projectFromRagemp) return new HttpException('НЕТ ТАКОГО СЕРВЕРА', HttpStatus.NOT_FOUND);
+    if (!projectFromRagemp) return new HttpException('Проект не найден', HttpStatus.NOT_FOUND);
 
-    let projectInDatabase = await this.projectRepository.save(createProjectDto);
+    let projectInDatabase = this.projectRepository.create({ ...createProjectDto, projectId: projectFromRagemp.id });
+
+    await this.projectRepository.save(projectInDatabase);
 
     projectFromRagemp.servers.forEach(server => {
       this.serverService.create({ project: projectInDatabase, serverName: server.name, serverId: server.id })
@@ -37,42 +39,32 @@ export class ProjectService {
     return true;
   }
 
-  async getProjectFromRagemp(name: string): Promise<IProject> {
+  async getProjectFromRagemp(projectId: string): Promise<IProject> {
     const projectsFromRagemp: IProject[] = await this.httpService.axiosRef
       .get("https://cdn.rage.mp/master/v2/")
       .then((res) => res.data);
     if (projectsFromRagemp) {
-      return projectsFromRagemp.find(project => project.servers[0].name.toLowerCase().includes(name.toLowerCase()))
+      return projectsFromRagemp.find(project => project.id === projectId)
     }
     return;
   }
 
   async getProjectsFromRagempByDatabase(): Promise<IProject[]> {
     const projects = await this.findAll();
-
-    const projectsNames = projects.map((srv) => srv.projectName);
-
     const projectsFromRagemp: IProject[] = await this.httpService.axiosRef
       .get("https://cdn.rage.mp/master/v2/")
       .then((res) => res.data);
 
     let projectsRagemp: IProject[] = [];
-    // добавление проекта в ответ функции
-    projectsNames.forEach((name) => {
-      let nameProject: string = name.toLowerCase();
+    projects.forEach((projc) => {
 
       let project: IProject = projectsFromRagemp.find((srv) => {
-        let nameServer = srv.servers[0].name.toLowerCase();
-        return nameServer.includes(nameProject);
+        return srv.id === projc.projectId
       });
 
-      const projectIdInDatabase = projects.find(
-        (prj) => prj.projectName === name,
-      ).id;
-
       project &&
-        projectsRagemp.push({ ...project, idInDatabase: projectIdInDatabase });
-    });
+        projectsRagemp.push({ ...project, idInDatabase: projc.id });
+    })
 
     return projectsRagemp;
   }

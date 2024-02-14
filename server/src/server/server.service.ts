@@ -33,22 +33,23 @@ export class ServerService {
   findOne(id: number) {
     return `This action returns a #${id} server`;
   }
-
+  /**
+   * Проверяет каждый час есть ли новый сервер
+   */
+  @Interval(1000)
   async checkingAllServersThereAreInDatabase() {
     try {
       let projects = await this.projectService.findAll(true)
+
       projects.forEach(async (project) => {
-        let projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectName)
+        let projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectId)
 
-        if (projectInRagempList.servers.length > project.servers.length) {
-          let amount = projectInRagempList.servers.length - project.servers.length;
-
-          for (let i = 0; i < amount - 1; i++) {
-            let len = projectInRagempList.servers.length;
-            let server = projectInRagempList.servers[len - i];
-            await this.create({ serverId: server.id, project, serverName: server.name })
-          }
-        }
+        projectInRagempList.servers.forEach(async (rServer) => {
+          let isNotNewServer = project.servers.find((server) => server.serverId === rServer.id)
+          if (isNotNewServer) return;
+          const newServer = rServer;
+          await this.create({ serverId: newServer.id, project, serverName: newServer.name })
+        })
       })
     } catch (e) {
       console.log(e);
@@ -61,7 +62,6 @@ export class ServerService {
   @Interval(5 * 60 * 1000)
   async saveTimestampServer() {
     try {
-      await this.checkingAllServersThereAreInDatabase();
 
       const projectsFromRagemp: IProject[] =
         await this.projectService.getProjectsFromRagempByDatabase();

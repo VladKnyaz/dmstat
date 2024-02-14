@@ -8,6 +8,9 @@ export class ProjectEntity {
   id: number;
 
   @Column()
+  projectId: string;
+
+  @Column()
   projectName: string;
 
   @Column()

@@ -25,7 +25,6 @@ export class ProjectController {
 
   @Get()
   findAll(@Query() query: { isRelations: boolean }) {
-    console.log(query.isRelations)
 
     return this.projectService.findAll(query.isRelations);
   }

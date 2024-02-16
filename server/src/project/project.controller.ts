@@ -31,8 +31,6 @@ export class ProjectController {
 
   @Get(":projectName")
   async findOne(@Param("projectName") projectName: string) {
-
-
     return this.projectService.findOneByName(projectName);
   }
 

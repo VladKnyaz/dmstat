@@ -13,7 +13,7 @@ import { UpdateServerDto } from "./dto/update-server.dto";
 
 @Controller("server")
 export class ServerController {
-  constructor(private readonly serverService: ServerService) {}
+  constructor(private readonly serverService: ServerService) { }
 
   @Post("create")
   create(@Body() createServerDto: CreateServerDto) {
@@ -25,8 +25,4 @@ export class ServerController {
     return this.serverService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.serverService.findOne(+id);
-  }
 }

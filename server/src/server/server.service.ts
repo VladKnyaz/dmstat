@@ -30,9 +30,6 @@ export class ServerService {
     return this.serverRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} server`;
-  }
   /**
    * Проверяет каждый час есть ли новый сервер
    */
@@ -62,7 +59,6 @@ export class ServerService {
   @Interval(5 * 60 * 1000)
   async saveTimestampServer() {
     try {
-
       const projectsFromRagemp: IProject[] =
         await this.projectService.getProjectsFromRagempByDatabase();
 
@@ -77,6 +73,7 @@ export class ServerService {
           let serverMp = project.servers.find(serv => serv.id === server.serverId)
 
           let tmpstamp = this.timestampRepository.create({ date: new Date().toString(), server, amountPlayers: serverMp.players.amount })
+
           await this.timestampRepository.save(tmpstamp);
         });
       });

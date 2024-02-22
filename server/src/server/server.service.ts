@@ -22,7 +22,15 @@ export class ServerService {
   ) { }
 
   async create(createServerDto: CreateServerDto) {
-    createServerDto.serverName = createServerDto.serverName.replace(/[^\w\s]/gi, '')
+    let isX2 = createServerDto.serverName.indexOf('X2')
+    createServerDto.serverName =
+      createServerDto.serverName.replace(/\s*\[.*?\]\s*/g, '') // Убираем все квадратные скобки
+    createServerDto.serverName =
+      createServerDto.serverName.split("discord")[0] // Убираем все квадратные скобки
+    createServerDto.serverName = createServerDto.serverName.toLocaleLowerCase().replace('gangwar', '').replace('bedwars', '').replace('freeroam', '').replace('drift', '').replace(/,/g, '').replace('x2', '').toLocaleUpperCase();
+    createServerDto.serverName = createServerDto.serverName.replace(/(\||,)/g, '').replace(',', '').trim()
+    createServerDto.serverName = createServerDto.serverName + (isX2 > -1 ? ' X2' : '');
+
     return await this.serverRepository.save(createServerDto);
   }
 
@@ -33,13 +41,16 @@ export class ServerService {
   /**
    * Проверяет каждый час есть ли новый сервер
    */
-  @Interval(1000)
+  @Interval(60 * 1000 * 60)
   async checkingAllServersThereAreInDatabase() {
     try {
       let projects = await this.projectService.findAll(true)
 
       projects.forEach(async (project) => {
         let projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectId)
+        if (!projectInRagempList) {
+          projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectId)
+        };
 
         projectInRagempList.servers.forEach(async (rServer) => {
           let isNotNewServer = project.servers.find((server) => server.serverId === rServer.id)

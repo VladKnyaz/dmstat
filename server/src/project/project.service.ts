@@ -24,7 +24,7 @@ export class ProjectService {
   ) { }
 
   async create(createProjectDto: CreateProjectDto) {
-    const projectFromRagemp: IProject = await this.getProjectFromRagemp(createProjectDto.projectName)
+    const projectFromRagemp: IProject = await this.getProjectFromRagempByName(createProjectDto.projectName)
 
     if (!projectFromRagemp) return new HttpException('Проект не найден', HttpStatus.NOT_FOUND);
 
@@ -36,7 +36,9 @@ export class ProjectService {
       this.serverService.create({ project: projectInDatabase, serverName: server.name, serverId: server.id })
     })
 
-    return true;
+    return {
+      message: "Сервер создан"
+    }
   }
 
   async getProjectFromRagemp(projectId: string): Promise<IProject> {
@@ -45,6 +47,21 @@ export class ProjectService {
       .then((res) => res.data);
     if (projectsFromRagemp) {
       return projectsFromRagemp.find(project => project.id === projectId)
+    }
+    return;
+  }
+
+  async getProjectFromRagempByName(projectName: string): Promise<IProject> {
+    projectName = projectName.toLocaleLowerCase();
+    const projectsFromRagemp: IProject[] = await this.httpService.axiosRef
+      .get("https://cdn.rage.mp/master/v2/")
+      .then((res) => res.data);
+
+    if (projectsFromRagemp) {
+      return projectsFromRagemp.find(project => {
+        const name = project.servers[0].name.toLocaleLowerCase();
+        return name.includes(projectName);
+      });
     }
     return;
   }

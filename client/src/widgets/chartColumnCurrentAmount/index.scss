@@ -1,0 +1,16 @@
+body .apexcharts-tooltip.apexcharts-theme-dark {
+  background: none;
+  .tooltipPie {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background: #444;
+    padding: 3px 20px;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+}

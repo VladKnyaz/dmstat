@@ -3,6 +3,7 @@ import React, { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
 import { useGetProjectsQuery } from "../../entities/projects";
+import { chartLineOptions } from "../../shared/lib/chartLineOptions";
 
 const ChartLineCurrentAmount: FC = () => {
   const { Text, Title } = Typography;
@@ -14,10 +15,10 @@ const ChartLineCurrentAmount: FC = () => {
 
   const chartOptions: ApexCharts.ApexOptions = {
     chart: {
-      stacked: true,
       background: "none",
       id: "charts23",
       type: "line",
+      height: 500,
       zoom: {
         type: "x",
         enabled: true,
@@ -28,28 +29,13 @@ const ChartLineCurrentAmount: FC = () => {
         show: false,
       },
     },
-    grid: {
-      borderColor: "rgba(110,170,220,0.3)",
-      show: true,
-      position: "back",
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
-      xaxis: {
-        lines: {
-          // offsetX: 312,
-          show: true,
-        },
-      },
+    markers: {
+      size: 0,
     },
+    grid: chartLineOptions.grid,
     colors: colors,
     dataLabels: {
       enabled: false,
-    },
-    markers: {
-      size: 1,
     },
     theme: {
       mode: "dark",
@@ -60,13 +46,43 @@ const ChartLineCurrentAmount: FC = () => {
     fill: {
       opacity: 1,
     },
-
+    yaxis: chartLineOptions.yaxis,
     xaxis: {
+      tooltip: chartLineOptions.xaxis?.tooltip,
       type: "datetime",
       categories: categories,
+      axisBorder: {
+        show: true,
+        color: "gray",
+      },
+
+      labels: chartLineOptions.xaxis?.labels,
+    },
+    tooltip: {
+      custom({ series, seriesIndex, dataPointIndex, w }) {
+        let text = ``;
+        w.globals.initialSeries.forEach((opts: any, index: number) => {
+          const color = w.globals.colors[index];
+          const currentOnline = opts.data[dataPointIndex];
+          text += `<div class="tooltipPie" style="border: 2px solid ${color}; margin-bottom: 14px">
+              <strong>${currentOnline}</strong>  
+            </div>`;
+        });
+
+        return text;
+      },
     },
     legend: {
+      tooltipHoverFormatter: function (seriesName, opts) {
+        return (
+          seriesName +
+          " - <strong>" +
+          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
+          "</strong>"
+        );
+      },
       position: "top",
+      markers: chartLineOptions.legend?.markers,
     },
   };
 

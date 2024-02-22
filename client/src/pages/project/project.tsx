@@ -46,7 +46,6 @@ const Project: FC = () => {
       ? Math.floor(online / projectData.servers.length)
       : 0;
   };
-  console.log(projectData);
 
   return (
     <Row justify="center">

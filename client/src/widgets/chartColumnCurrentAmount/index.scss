@@ -14,3 +14,10 @@ body .apexcharts-tooltip.apexcharts-theme-dark {
     margin: 0;
   }
 }
+
+.chartPieMain .apexcharts-legend {
+  display: grid;
+  width: 40rem;
+  margin: 0 auto;
+  grid-template-columns: 1fr 1fr 1fr;
+}

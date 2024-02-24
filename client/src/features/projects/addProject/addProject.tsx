@@ -23,6 +23,7 @@ const AddProject: FC = () => {
       color: data.color,
       projectName: data.projectName,
     });
+
     if ("error" in res) {
       //@ts-ignore
       openNotify("Ошибка", res.error);

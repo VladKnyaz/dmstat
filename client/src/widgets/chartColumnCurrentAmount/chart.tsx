@@ -45,7 +45,7 @@ const ChartColumnCurrentAmount: FC = () => {
       },
     },
     grid: {
-      borderColor: "rgba(110,170,220,0.3)",
+      borderColor: "rgba(110,170,220,0.1)",
       show: true,
       yaxis: {
         lines: {
@@ -197,12 +197,18 @@ const ChartColumnCurrentAmount: FC = () => {
               height={500}
               type="bar"
             ></ApexChart>
-            <ApexChart
-              options={chartOptionsPie}
-              series={seriesPie}
-              height={300}
-              type="pie"
-            ></ApexChart>
+            <Flex justify="center" gap="middle" vertical align="center">
+              <Title level={5}>Доля проекта от текущего онлайна</Title>
+            </Flex>
+
+            <div className="chartPieMain">
+              <ApexChart
+                options={chartOptionsPie}
+                series={seriesPie}
+                height={300}
+                type="pie"
+              ></ApexChart>
+            </div>
           </div>
         )}
       </Col>

@@ -44,7 +44,17 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     fill: {
       opacity: 1,
     },
-    yaxis: chartLineOptions.yaxis,
+    yaxis: {
+      show: true,
+      stepSize: 100,
+      forceNiceScale: true,
+      axisBorder: {
+        show: true,
+        offsetX: -5,
+        color: "gray",
+        width: 2,
+      },
+    },
     xaxis: {
       tooltip: chartLineOptions.xaxis?.tooltip,
       type: "datetime",

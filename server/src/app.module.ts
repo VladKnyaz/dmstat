@@ -9,17 +9,17 @@ import { TimestampProjectEntity } from "./project/entities/timestamp.entity";
 import { TimestampServerEntity } from "./server/entities/timestamp.entity";
 import { ProjectEntity } from "./project/entities/project.entity";
 import { ScheduleModule } from "@nestjs/schedule";
-
+import 'dotenv/config'
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: "localhost",
-      database: "dmstat",
-      port: 3306,
-      username: "admin",
-      password: "root",
+      host: process.env.DATABASE_HOST,
+      database: process.env.DATABASE_DB,
+      port: Number(process.env.DATABASE_PORT),
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
       entities: [
         ServerEntity,
         TimestampProjectEntity,

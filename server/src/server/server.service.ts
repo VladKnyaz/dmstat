@@ -31,6 +31,8 @@ export class ServerService {
     createServerDto.serverName = createServerDto.serverName.replace(/(\||,)/g, '').replace(',', '').trim()
     createServerDto.serverName = createServerDto.serverName + (isX2 > -1 ? ' X2' : '');
 
+    console.log(">>>>>Server Name:", createServerDto.serverName)
+
     return await this.serverRepository.save(createServerDto);
   }
 

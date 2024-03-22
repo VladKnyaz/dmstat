@@ -33,7 +33,7 @@ export class ProjectService {
     await this.projectRepository.save(projectInDatabase);
 
     projectFromRagemp.servers.forEach(server => {
-      console.log(">>>>Server Name", server.name)
+
       this.serverService.create({ project: projectInDatabase, serverName: server.name, serverId: server.id })
     })
 

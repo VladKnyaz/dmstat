@@ -46,6 +46,7 @@ export class ProjectService {
     await this.projectRepository.save(projectInDatabase);
 
     projectFromRagemp.servers.forEach(server => {
+
       this.serverService.create({ project: projectInDatabase, serverName: server.name, serverId: server.id })
     })
 

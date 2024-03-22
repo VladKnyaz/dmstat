@@ -17,13 +17,15 @@ COPY . .
 
 RUN yarn run build
 
+FROM base AS runner
+WORKDIR /app
 
-FROM ubuntu AS runner
+COPY --from=builder /app/dist /dist
 
-RUN apt-get update
-RUN apt-get install nginx -y
+RUN yarn global add serve
 
-COPY --from=builder /app/dist /var/www/html/
+WORKDIR /
+
 EXPOSE 80
 
-CMD ["nginx","-g","daemon off;"]
+CMD ["serve", "dist"]

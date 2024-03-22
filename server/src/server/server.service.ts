@@ -40,8 +40,6 @@ export class ServerService {
 
     createServerDto.serverName = createServerDto.serverName.toLocaleLowerCase().replace(/,/g, '').replace('x2', '').toLocaleUpperCase();
 
-    createServerDto.serverName = createServerDto.serverName.replace(/(\||,)/g, '').replace(',', '');
-
     createServerDto.serverName = createServerDto.serverName.replace(/[^\s\d\w]/g, '').trim();
 
     createServerDto.serverName = createServerDto.serverName + (isX2 ? ' X2' : '');
@@ -84,7 +82,7 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 5 минут
    */
-  @Interval(5 * 60 * 1000)
+  @Interval(1 * 60 * 1000)
   async saveTimestampServer() {
     try {
       const projectsFromRagemp: IProject[] =

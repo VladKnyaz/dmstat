@@ -26,6 +26,6 @@ RUN yarn global add serve
 
 WORKDIR /
 
-EXPOSE 80
+EXPOSE 3000
 
 CMD ["serve", "dist"]

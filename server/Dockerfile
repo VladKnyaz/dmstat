@@ -17,15 +17,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN yarn run build
+RUN yarn run start
 
-CMD ["node", "dist/main.js"]
 
-FROM base AS runner
-
-WORKDIR /app
-
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-
-CMD ["node", "dist/main.js"]

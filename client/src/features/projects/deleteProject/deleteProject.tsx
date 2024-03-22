@@ -1,13 +1,10 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Button,
   Empty,
   Flex,
   Form,
-  Input,
-  Popconfirm,
   Select,
-  Typography,
   notification,
 } from "antd";
 
@@ -38,8 +35,6 @@ const DeleteProject: FC = () => {
     data: dataProjects,
     isLoading,
     isSuccess,
-    isError,
-    refetch,
   } = useGetProjectsQuery({});
 
   const [deleteProject] = useDeleteProjectMutation();

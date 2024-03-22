@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import ApexChart from "react-apexcharts";
 import { IProject } from "../projects";
-import moment from "moment";
 
 const ChartColumnProject: FC<{ projectData: IProject }> = ({ projectData }) => {
   const [categories, setCategories] = useState<number[]>([]);
@@ -78,7 +77,7 @@ const ChartColumnProject: FC<{ projectData: IProject }> = ({ projectData }) => {
       setColors(arrColors);
       setSeries(arrSeries);
       if (projectData.servers) {
-        let cat: number[] = projectData.servers.map((s, index) => index + 1);
+        let cat: number[] = projectData.servers.map((_s, index) => index + 1);
         setCategories(cat);
       }
     }

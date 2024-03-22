@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { BrowserView, MobileView } from "react-device-detect";
 
 const Menu: FC = () => {
-  const [items, setItems] = React.useState<MenuProps["items"]>([
+  const [items] = React.useState<MenuProps["items"]>([
     {
       key: 1,
       label: <MenuOutlined style={{ justifySelf: "center" }} />,

@@ -1,14 +1,31 @@
 # syntax=docker/dockerfile:1
-FROM node:18
+FROM node:18-alpine AS base
+
+FROM base AS deps
+
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json ./
-COPY yarn.lock ./
-RUN --mount=type=cache,target=/root/.yarn YARN_CACHE_FOLDER=/root/.yarn yarn --frozen-lockfile
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* ./
+RUN yarn --frozen-lockfile
 
+FROM base AS builder
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-EXPOSE 5000/tcp
-EXPOSE 5000/udp
+RUN yarn run build
 
-CMD ["yarn", "start:dev"]
+CMD ["node", "dist/main.js"]
+
+FROM base AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+CMD ["node", "dist/main.js"]

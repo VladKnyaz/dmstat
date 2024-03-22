@@ -1,12 +1,12 @@
 import { Row, Col, Typography, Flex } from "antd";
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
 import { useGetProjectsQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
 
 const ChartLinePeaks: FC = () => {
-  const { Text, Title } = Typography;
+  const { Title } = Typography;
 
   const [categories, setCategories] = useState<number[]>([]);
   const [minDate, setMinDate] = useState<number>();
@@ -59,7 +59,7 @@ const ChartLinePeaks: FC = () => {
       labels: chartLineOptions.xaxis?.labels,
     },
     tooltip: {
-      custom({ series, seriesIndex, dataPointIndex, w }) {
+      custom({ dataPointIndex, w }) {
         let text = ``;
         w.globals.initialSeries.forEach((opts: any, index: number) => {
           const color = w.globals.colors[index];

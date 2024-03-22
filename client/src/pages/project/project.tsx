@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetProjectQuery } from "../../entities/projects";
 import { Col, Flex, Row, Typography } from "antd";
@@ -6,7 +6,6 @@ import { Col, Flex, Row, Typography } from "antd";
 import { isMobile } from "react-device-detect";
 import { ChartColumnProject } from "./../../entities/chartColumnProject/";
 import { ChartLineServer } from "./../../entities/chartLineServer";
-import moment from "moment";
 
 const Project: FC = () => {
   const params = useParams();
@@ -14,7 +13,6 @@ const Project: FC = () => {
   const {
     data: projectData,
     isLoading,
-    isSuccess,
     isError,
   } = useGetProjectQuery({ projectName });
 
@@ -23,8 +21,6 @@ const Project: FC = () => {
 
   useEffect(() => {
     if (projectData) {
-      let onlines: number[] = [];
-      let time: string;
 
       let currentTimeOnline = 0;
       projectData.servers?.forEach((server) => {
@@ -32,7 +28,6 @@ const Project: FC = () => {
           let stmp = server.timestamps[server.timestamps.length - 1];
           if (stmp) {
             currentTimeOnline += stmp ? stmp.amountPlayers : 0;
-            time = moment(stmp.date).format("HH:mm");
           }
         }
       });

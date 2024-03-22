@@ -1,5 +1,5 @@
 import { Row, Col, Typography, Flex } from "antd";
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
 import { useGetProjectsQuery } from "../../entities/projects";
@@ -27,7 +27,7 @@ const ChartColumnCurrentAmount: FC = () => {
       background: "none",
       id: "charts23",
       events: {
-        dataPointSelection(event, chartContext, config) {
+        dataPointSelection(_event, _chartContext, config) {
           const dp = config.dataPointIndex;
           if (projectInfo) {
             navigate(`/project/${projectInfo[dp].projectName}`);
@@ -160,7 +160,7 @@ const ChartColumnCurrentAmount: FC = () => {
         })
       : [],
     tooltip: {
-      custom({ series, seriesIndex, dataPointIndex, w }) {
+      custom({  seriesIndex, w }) {
         const percent = NumericArrayToPercantageArr(w.globals.initialSeries)[
           seriesIndex
         ];

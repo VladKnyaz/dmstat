@@ -67,7 +67,7 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
       labels: chartLineOptions.xaxis?.labels,
     },
     tooltip: {
-      custom({ series, seriesIndex, dataPointIndex, w }) {
+      custom({ dataPointIndex, w }) {
         let text = ``;
         w.globals.initialSeries.forEach((opts: any, index: number) => {
           const color = w.globals.colors[index];

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Button, Form, Input, Tooltip, Typography, notification } from "antd";
 import { useAddProjectMutation } from "../../../entities/projects";
 

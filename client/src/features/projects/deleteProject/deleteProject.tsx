@@ -1,13 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import {
-  Button,
-  Empty,
-  Flex,
-  Form,
-  Select,
-  notification,
-} from "antd";
-
+import { Button, Empty, Flex, Form, Select, notification } from "antd";
 
 import {
   useGetProjectsQuery,
@@ -16,7 +8,7 @@ import {
 
 interface ISelectValues {
   label: string;
-  value: string;
+  value: string | number;
 }
 
 const DeleteProject: FC = () => {
@@ -31,23 +23,21 @@ const DeleteProject: FC = () => {
     });
   };
 
-  const {
-    data: dataProjects,
-    isLoading,
-    isSuccess,
-  } = useGetProjectsQuery({});
+  const { data: dataProjects, isLoading, isSuccess } = useGetProjectsQuery({});
 
   const [deleteProject] = useDeleteProjectMutation();
 
   const onFinish = async (data: { projectName: string }) => {
     let res = await deleteProject(data.projectName);
 
-    if ("error" in res) {
-      //@ts-ignore
-      openNotify("Ошибка", res.error);
+    if (!res) {
+      openNotify("Ошибка", "");
       return;
-    } else if ("message" in res.data) {
-      openNotify("Ответ от сервера", String(res.data.message));
+    }
+
+    if ("error" in res) {
+      openNotify("Ошибка", "");
+      return;
     } else {
       openNotify("Проект удалён", "");
     }
@@ -56,8 +46,13 @@ const DeleteProject: FC = () => {
   useEffect(() => {
     if (isSuccess) {
       setSelectValues(
-        dataProjects.map((project) => {
-          return { label: project.projectName, value: project.projectName };
+        dataProjects.map((project, index) => {
+          return {
+            key: index,
+            id: index,
+            label: project.projectName,
+            value: project.projectName,
+          };
         })
       );
     }

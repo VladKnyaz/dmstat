@@ -127,6 +127,7 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     xaxis: {
       type: "datetime",
       categories: categories,
+      labels: chartLineOptions.xaxis?.labels,
     },
     yaxis: {
       labels: {

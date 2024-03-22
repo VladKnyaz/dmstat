@@ -119,6 +119,7 @@ const ChartLineCurrentAmount: FC = () => {
     xaxis: {
       type: "datetime",
       categories: categories,
+      labels: chartLineOptions.xaxis?.labels,
     },
     yaxis: {
       labels: {

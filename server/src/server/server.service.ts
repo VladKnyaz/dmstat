@@ -82,7 +82,7 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 5 минут
    */
-  @Interval(1 * 60 * 1000)
+  @Interval(5 * 60 * 1000)
   async saveTimestampServer() {
     try {
       const projectsFromRagemp: IProject[] =

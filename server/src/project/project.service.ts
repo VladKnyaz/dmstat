@@ -40,7 +40,6 @@ export class ProjectService {
       }
     }
 
-
     let projectInDatabase = this.projectRepository.create({ ...createProjectDto, projectId: projectFromRagemp.id });
 
     await this.projectRepository.save(projectInDatabase);

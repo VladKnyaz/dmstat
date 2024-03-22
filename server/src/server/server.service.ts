@@ -22,14 +22,29 @@ export class ServerService {
   ) { }
 
   async create(createServerDto: CreateServerDto) {
-    let isX2 = createServerDto.serverName.indexOf('X2')
+    const isX2 = createServerDto.serverName.includes("X2")
+
+
+
     createServerDto.serverName =
       createServerDto.serverName.replace(/\s*\[.*?\]\s*/g, '') // Убираем все квадратные скобки
+
     createServerDto.serverName =
       createServerDto.serverName.split("discord")[0] // Убираем все квадратные скобки
-    createServerDto.serverName = createServerDto.serverName.toLocaleLowerCase().replace('gangwar', '').replace('bedwars', '').replace('freeroam', '').replace('drift', '').replace(/,/g, '').replace('x2', '').toLocaleUpperCase();
-    createServerDto.serverName = createServerDto.serverName.replace(/(\||,)/g, '').replace(',', '').trim()
-    createServerDto.serverName = createServerDto.serverName + (isX2 > -1 ? ' X2' : '');
+
+    const blackList = ['gangwar', 'bedwars', 'freeroam', 'drift', 'https']
+
+    blackList.forEach((word) => {
+      createServerDto.serverName = createServerDto.serverName.toLocaleLowerCase().replace(word, '').toLocaleUpperCase();
+    })
+
+    createServerDto.serverName = createServerDto.serverName.toLocaleLowerCase().replace(/,/g, '').replace('x2', '').toLocaleUpperCase();
+
+    createServerDto.serverName = createServerDto.serverName.replace(/(\||,)/g, '').replace(',', '');
+
+    createServerDto.serverName = createServerDto.serverName.replace(/[^\s\d\w]/g, '').trim();
+
+    createServerDto.serverName = createServerDto.serverName + (isX2 ? ' X2' : '');
 
     return await this.serverRepository.save(createServerDto);
   }

@@ -28,6 +28,19 @@ export class ProjectService {
 
     if (!projectFromRagemp) return new HttpException('Проект не найден', HttpStatus.NOT_FOUND);
 
+    const itIsInDatabase = await this.projectRepository.findOne({
+      where: {
+        projectId: projectFromRagemp.id
+      }
+    });
+
+    if (itIsInDatabase) {
+      return {
+        message: "Проект существует в базе"
+      }
+    }
+
+
     let projectInDatabase = this.projectRepository.create({ ...createProjectDto, projectId: projectFromRagemp.id });
 
     await this.projectRepository.save(projectInDatabase);
@@ -37,7 +50,7 @@ export class ProjectService {
     })
 
     return {
-      message: "Сервер создан"
+      message: "Проект создан"
     }
   }
 

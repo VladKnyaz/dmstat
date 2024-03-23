@@ -222,7 +222,9 @@ const ChartColumnCurrentAmount: FC = () => {
         </Col>
       </Row>
       <Row>
-        <p className="text_online">Общий онлайн DM серверов: {allOnline}</p>
+        <div className="info_online">
+          <p className="text_online">Общий онлайн DM серверов: {allOnline}</p>
+        </div>
       </Row>
     </>
   );

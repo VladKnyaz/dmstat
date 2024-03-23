@@ -88,6 +88,7 @@ export class ServerService {
       const projectsFromRagemp: IProject[] =
         await this.projectService.getProjectsFromRagempByDatabase();
 
+      if (!projectsFromRagemp) return;
 
       const currentDate = new Date().toString();
 

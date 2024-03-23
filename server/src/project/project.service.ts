@@ -85,6 +85,8 @@ export class ProjectService {
       .get("https://cdn.rage.mp/master/v2/")
       .then((res) => res.data);
 
+    if (!projectsFromRagemp) return;
+
     let projectsRagemp: IProject[] = [];
     projects.forEach((projc) => {
 
@@ -105,7 +107,7 @@ export class ProjectService {
   @Cron("59 59 23 * * * ")
   async savePeaksProjects() {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
-
+    if (!projectsFromRagemp) return;
     const currentDate = new Date();
 
     projectsFromRagemp.forEach(async (project) => {

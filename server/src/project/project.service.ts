@@ -106,18 +106,23 @@ export class ProjectService {
   async savePeaksProjects() {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
 
+    const currentDate = new Date();
+
     projectsFromRagemp.forEach(async (project) => {
       const projectFromDatabase = await this.projectRepository.findOne({
         where: {
           id: project.idInDatabase,
         },
       });
-      const date = new Date();
+      if (!projectFromDatabase) return;
+
+
       const prj = this.timestampRepository.create({
         project: projectFromDatabase,
         peak: project.players.peak,
-        date,
+        date: currentDate,
       });
+
       this.timestampRepository.save(prj);
     });
   }

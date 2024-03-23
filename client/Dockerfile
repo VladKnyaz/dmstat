@@ -15,17 +15,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN yarn run build
+RUN yarn build
 
-FROM base AS runner
-WORKDIR /app
+FROM nginx:stable-alpine
 
-COPY --from=builder /app/dist /dist
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN yarn global add serve
+EXPOSE 80
 
-WORKDIR /
-
-EXPOSE 3000
-
-CMD ["serve", "dist"]
+CMD ["nginx","-g","daemon off;"]

@@ -104,7 +104,11 @@ const ChartColumnCurrentAmount: FC = () => {
           }
         });
 
-        names.push([project.projectName, `В ${time}: ${currentTimeOnline}`]);
+        names.push([
+          project.projectName,
+          `В ${time ? time : "-"}: ${currentTimeOnline}`,
+        ]);
+
         onlines.push(currentTimeOnline);
         arrProjectInfo.push({
           projectName: project.projectName,
@@ -160,7 +164,7 @@ const ChartColumnCurrentAmount: FC = () => {
         })
       : [],
     tooltip: {
-      custom({  seriesIndex, w }) {
+      custom({ seriesIndex, w }) {
         const percent = NumericArrayToPercantageArr(w.globals.initialSeries)[
           seriesIndex
         ];
@@ -187,7 +191,7 @@ const ChartColumnCurrentAmount: FC = () => {
           <Title level={5}>Текущий онлайн DM проектов RAGEMP</Title>
         </Flex>
 
-        {isLoading && "Loading"}
+        {isLoading && "Загрузка..."}
 
         {isSuccess && (
           <div className="chart" style={{ maxWidth: "100%" }}>

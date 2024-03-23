@@ -21,7 +21,6 @@ const Project: FC = () => {
 
   useEffect(() => {
     if (projectData) {
-
       let currentTimeOnline = 0;
       projectData.servers?.forEach((server) => {
         if (server.timestamps) {
@@ -44,9 +43,9 @@ const Project: FC = () => {
 
   return (
     <Row justify="center">
-      {isLoading && "Loading"}
+      {isLoading && "Загрузка..."}
       {isError && "error"}
-      {!projectData && "Проект не найден"}
+      {!isLoading && !projectData && "Проект не найден"}
       {projectData && (
         <Col span={20}>
           <Flex justify="center" gap="middle" vertical align="center">

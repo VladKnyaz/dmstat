@@ -216,7 +216,7 @@ const ChartLineCurrentAmount: FC = () => {
           <Title level={5}>Текущий онлайн DM проектов RAGEMP</Title>
         </Flex>
 
-        {isLoading && "Loading"}
+        {isLoading && "Загрузка..."}
 
         {isSuccess && (
           <div className="chart" style={{ maxWidth: "100%" }}>

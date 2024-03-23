@@ -204,7 +204,7 @@ const ChartLinePeaks: FC = () => {
           <Title level={5}>Пиковый онлайн DM проектов RAGEMP</Title>
         </Flex>
 
-        {isLoading && "Loading"}
+        {isLoading && "Загрузка..."}
 
         {isSuccess && (
           <div className="chart" style={{ maxWidth: "100%" }}>

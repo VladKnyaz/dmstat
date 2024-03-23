@@ -4,7 +4,6 @@ import { FC, useState, useEffect } from "react";
 import ApexChart from "react-apexcharts";
 import { useGetProjectsQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
-import moment from "moment";
 
 const ChartLinePeaks: FC = () => {
   const { Title } = Typography;

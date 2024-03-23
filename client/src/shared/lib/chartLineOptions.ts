@@ -32,11 +32,10 @@ export const chartLineOptions: ApexCharts.ApexOptions = {
     xaxis: {
         tooltip: {
             formatter: (val: string) => {
-                return moment(Number(val)).format("HH:mm:ss");
+                return moment.utc(Number(val)).format("HH:mm:ss");
             },
         },
         labels: {
-            datetimeUTC: false,
             datetimeFormatter: {
                 year: "yyyy",
                 month: "MMM 'yy",

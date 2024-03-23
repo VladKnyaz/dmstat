@@ -30,7 +30,21 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     markers: {
       size: 0,
     },
-    grid: chartLineOptions.grid,
+    grid: {
+      borderColor: "rgba(110,170,220,0.1)",
+      show: true,
+      position: "back",
+      yaxis: {
+        lines: {
+          show: true,
+        },
+      },
+      xaxis: {
+        lines: {
+          show: true,
+        },
+      },
+    },
     colors: [color],
     dataLabels: {
       enabled: false,
@@ -44,9 +58,12 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     fill: {
       opacity: 1,
     },
+
     yaxis: {
+      tickAmount: 20,
+
       show: true,
-      stepSize: 100,
+      stepSize: 50,
       forceNiceScale: true,
       axisBorder: {
         show: true,
@@ -56,6 +73,7 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
       },
     },
     xaxis: {
+      tickAmount: 20,
       tooltip: chartLineOptions.xaxis?.tooltip,
       type: "datetime",
       categories: categories,
@@ -168,13 +186,16 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
           new Date(stamp.date).getTime()
         );
 
-        let len = server.timestamps.length;
+        let lengthStamp = server.timestamps.length;
 
         const minDated = new Date(server.timestamps[0].date).getTime();
-        const maxDated = new Date(server.timestamps[len - 1].date).getTime();
+        const maxDated = new Date(
+          server.timestamps[lengthStamp - 1].date
+        ).getTime();
 
         setMinDate(minDated);
-        setMaxDate(maxDated);
+
+        if (lengthStamp > 1) setMaxDate(maxDated);
       }
 
       arrTimestamps.forEach((mainStampTime) => {

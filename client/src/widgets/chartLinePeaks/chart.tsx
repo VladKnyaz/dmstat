@@ -4,6 +4,7 @@ import { FC, useState, useEffect } from "react";
 import ApexChart from "react-apexcharts";
 import { useGetProjectsQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
+import moment from "moment";
 
 const ChartLinePeaks: FC = () => {
   const { Title } = Typography;
@@ -169,12 +170,17 @@ const ChartLinePeaks: FC = () => {
             new Date(stamp.date).getTime()
           );
 
-          let len = project.timestamps.length;
+          let lengthStamp = project.timestamps.length;
 
           const minDated = new Date(project.timestamps[0].date).getTime();
-          const maxDated = new Date(project.timestamps[len - 1].date).getTime();
+
+          const maxDated = new Date(
+            project.timestamps[lengthStamp - 1].date
+          ).getTime();
+
           setMinDate(minDated);
-          setMaxDate(maxDated);
+
+          if (lengthStamp > 1) setMaxDate(maxDated);
         }
 
         let dataPeak: number[] = [];

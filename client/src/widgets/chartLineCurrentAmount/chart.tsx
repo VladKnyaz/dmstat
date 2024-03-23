@@ -171,15 +171,15 @@ const ChartLineCurrentAmount: FC = () => {
               new Date(stamp.date).getTime()
             );
 
-            let len = server.timestamps.length;
+            let lengthStamp = server.timestamps.length;
 
             const minDated = new Date(server.timestamps[0].date).getTime();
             const maxDated = new Date(
-              server.timestamps[len - 1].date
+              server.timestamps[lengthStamp - 1].date
             ).getTime();
 
             setMinDate(minDated);
-            setMaxDate(maxDated);
+            if (lengthStamp > 1) setMaxDate(maxDated);
           }
         });
 

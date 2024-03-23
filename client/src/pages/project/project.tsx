@@ -58,7 +58,7 @@ const Project: FC = () => {
                 <Text>Название: {projectData.projectName}</Text>
                 <Text>Количество серверов: {projectData.servers?.length}</Text>
                 <Text>
-                  Полный онлайн: {online} (Срдений: {getAvgOnline()})
+                  Полный онлайн: {online} (Средний: {getAvgOnline()})
                 </Text>
               </Flex>
             </Col>

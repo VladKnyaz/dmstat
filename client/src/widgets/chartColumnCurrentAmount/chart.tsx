@@ -99,7 +99,7 @@ const ChartColumnCurrentAmount: FC = () => {
             let stmp = server.timestamps[server.timestamps.length - 1];
             if (stmp) {
               currentTimeOnline += stmp ? stmp.amountPlayers : 0;
-              time = moment(stmp.date).format("HH:mm");
+              time = moment.utc(stmp.date).format("HH:mm");
             }
           }
         });

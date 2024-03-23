@@ -15,17 +15,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN yarn run build
+EXPOSE 5173
 
-FROM base AS runner
-WORKDIR /app
-
-COPY --from=builder /app/dist /dist
-
-RUN yarn global add serve
-
-WORKDIR /
-
-EXPOSE 3000
-
-CMD ["serve", "dist"]
+RUN yarn run dev

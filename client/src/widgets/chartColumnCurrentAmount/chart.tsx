@@ -16,6 +16,7 @@ const ChartColumnCurrentAmount: FC = () => {
     ApexAxisChartSeries | ApexNonAxisChartSeries
   >([]);
   const [seriesPie, setSeriesPie] = useState<number[]>([]);
+  const [allOnline, setAllOnline] = useState<number>(0);
 
   const [projectInfo, setProjectInfo] =
     useState<{ projectName: string; online: number }[]>();
@@ -115,6 +116,9 @@ const ChartColumnCurrentAmount: FC = () => {
           online: currentTimeOnline,
         });
       });
+      arrProjectInfo.forEach((prj) => {
+        setAllOnline((prev) => prj.online + prev);
+      });
 
       arrSeries.push({
         data: onlines,
@@ -128,6 +132,7 @@ const ChartColumnCurrentAmount: FC = () => {
       setCategories(names);
     }
   }, [data]);
+  console.log(projectInfo);
 
   const chartOptionsPie: ApexCharts.ApexOptions = {
     chart: {
@@ -185,38 +190,41 @@ const ChartColumnCurrentAmount: FC = () => {
   };
 
   return (
-    <Row>
-      <Col span={24}>
-        <Flex justify="center" gap="middle" vertical align="center">
-          <Title level={5}>Текущий онлайн DM проектов RAGEMP</Title>
-        </Flex>
-
-        {isLoading && "Загрузка..."}
-
-        {isSuccess && (
-          <div className="chart" style={{ maxWidth: "100%" }}>
-            <ApexChart
-              options={chartOptions}
-              series={series}
-              height={500}
-              type="bar"
-            ></ApexChart>
-            <Flex justify="center" gap="middle" vertical align="center">
-              <Title level={5}>Доля проекта от текущего онлайна</Title>
-            </Flex>
-
-            <div className="chartPieMain">
+    <>
+      <Row>
+        <Col span={24}>
+          <Flex justify="center" gap="middle" vertical align="center">
+            <Title level={5}>Текущий онлайн DM проектов RAGEMP</Title>
+          </Flex>
+          {isLoading && "Загрузка..."}
+          {isSuccess && (
+            <div className="chart" style={{ maxWidth: "100%" }}>
               <ApexChart
-                options={chartOptionsPie}
-                series={seriesPie}
-                height={300}
-                type="pie"
+                options={chartOptions}
+                series={series}
+                height={500}
+                type="bar"
               ></ApexChart>
+              <Flex justify="center" gap="middle" vertical align="center">
+                <Title level={5}>Доля проекта от текущего онлайна</Title>
+              </Flex>
+
+              <div className="chartPieMain">
+                <ApexChart
+                  options={chartOptionsPie}
+                  series={seriesPie}
+                  height={300}
+                  type="pie"
+                ></ApexChart>
+              </div>
             </div>
-          </div>
-        )}
-      </Col>
-    </Row>
+          )}
+        </Col>
+      </Row>
+      <Row>
+        <p className="text_online">Общий онлайн DM серверов: {allOnline}</p>
+      </Row>
+    </>
   );
 };
 

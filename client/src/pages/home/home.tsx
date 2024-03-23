@@ -1,10 +1,5 @@
-import  { FC } from "react";
-import {
-  Col,
-  Row,
-  Typography,
-  Flex,
-} from "antd";
+import { FC } from "react";
+import { Col, Row, Typography, Flex } from "antd";
 
 import { ChartColumnCurrentAmount } from "../../widgets/chartColumnCurrentAmount";
 
@@ -17,7 +12,7 @@ const Home: FC = () => {
           <Flex justify="center" gap="middle" vertical align="center">
             <Title level={3}>Столбчатая диаграмма</Title>
           </Flex>
-          <ChartColumnCurrentAmount/>
+          <ChartColumnCurrentAmount />
         </Col>
       </Row>
     </>

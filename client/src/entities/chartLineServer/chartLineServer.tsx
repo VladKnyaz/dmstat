@@ -60,8 +60,6 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     },
 
     yaxis: {
-      tickAmount: 20,
-
       show: true,
       stepSize: 50,
       forceNiceScale: true,
@@ -73,7 +71,6 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
       },
     },
     xaxis: {
-      tickAmount: 20,
       tooltip: chartLineOptions.xaxis?.tooltip,
       type: "datetime",
       categories: categories,

@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 5173
 
-RUN yarn run dev
+CMD ["yarn", "run", "dev"]

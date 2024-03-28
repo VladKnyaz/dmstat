@@ -17,11 +17,13 @@ COPY . .
 
 RUN yarn build
 
-FROM nginx:stable-alpine
+FROM base AS runner
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY --from=builder /app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
 
-EXPOSE 80
+RUN yarn global add serve
 
-CMD ["nginx","-g","daemon off;"]
+EXPOSE 3000
+
+CMD ["serve", "dist", "--single"]

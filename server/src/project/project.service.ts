@@ -129,13 +129,20 @@ export class ProjectService {
     });
   }
 
-  findAll(isRelations: boolean = false) {
+  async findAll(isRelations: boolean = false) {
+    const start = new Date()
+    console.log("Start", start)
 
     let relationsArray = ["servers", "servers.timestamps", "timestamps"];
 
     if (!isRelations) relationsArray = [];
+    let test = await this.projectRepository.find({ relations: relationsArray });
 
-    return this.projectRepository.find({ relations: relationsArray });
+    const finish = new Date()
+    console.log("Finish", finish)
+    //@ts-ignore
+    console.log("Time", `${finish - start}ms`)
+    return test
   }
 
   findOneById(id: number) {

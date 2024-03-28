@@ -24,9 +24,9 @@ export class ProjectController {
   }
 
   @Get()
-  findAll(@Query() query: { isRelations: boolean }) {
+  async findAll(@Query() query: { isRelations: boolean }) {
 
-    return this.projectService.findAll(query.isRelations);
+    return await this.projectService.findAll(query.isRelations);
   }
 
   @Get(":projectName")

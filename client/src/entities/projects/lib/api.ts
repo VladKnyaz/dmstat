@@ -51,7 +51,7 @@ interface IGetProjects {
 }
 
 
-const projectsApiWithTag = api.enhanceEndpoints({ addTagTypes: ['Project'] })
+const projectsApiWithTag = api.enhanceEndpoints({ addTagTypes: ['Project', 'ProjectCurrent'] })
 
 const projectsApi = projectsApiWithTag.injectEndpoints({
     endpoints: (builder) => ({
@@ -72,7 +72,7 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
                 method: "POST",
                 body
             }),
-            invalidatesTags: ['Project']
+            invalidatesTags: ['Project', 'ProjectCurrent']
         }),
         deleteProject: builder.mutation<IProject, string>({
 
@@ -83,7 +83,7 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
                     projectName
                 }
             }),
-            invalidatesTags: ['Project']
+            invalidatesTags: ['Project', 'ProjectCurrent']
         }),
         getProject: builder.query<IProject, IFindProject>({
             query: (body) => ({
@@ -93,10 +93,11 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
             })
         }),
         getProjectsCurrent: builder.query<IProjectCurrentOnline[], void>({
-            query: (body) => ({
+            query: () => ({
                 url: `/projects/get/current`,
                 method: "GET",
-            })
+            }),
+            providesTags: ['ProjectCurrent']
         }),
     }),
     overrideExisting: true,

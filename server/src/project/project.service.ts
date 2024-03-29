@@ -42,11 +42,33 @@ export class ProjectService {
 
     let projectInDatabase = this.projectRepository.create({ ...createProjectDto, projectId: projectFromRagemp.id });
 
-    await this.projectRepository.save(projectInDatabase);
+    const projectNew = await this.projectRepository.save(projectInDatabase);
 
     projectFromRagemp.servers.forEach(server => {
 
       this.serverService.create({ project: projectInDatabase, serverName: server.name, serverId: server.id })
+    })
+
+    const projects = await this.projectRepository.find({ relations: ['timestamps'] })
+
+    let maxLen = 0;
+    let projectWithMaxLengthTimestamps: ProjectEntity;
+
+    projects.forEach(proj => {
+      if (!proj.timestamps) return;
+      if (proj.timestamps.length > maxLen) {
+        projectWithMaxLengthTimestamps = proj;
+        maxLen = proj.timestamps.length
+      }
+    })
+
+    projectWithMaxLengthTimestamps.timestamps.forEach((stamp) => {
+      const servStamp = this.timestampRepository.create({
+        project: projectNew,
+        date: stamp.date,
+        peak: 0
+      })
+      this.timestampRepository.save(servStamp)
     })
 
     return {
@@ -138,6 +160,12 @@ export class ProjectService {
       let time: string;
 
       project.servers.forEach((serv) => {
+        if (serv.timestamps.length < 1) {
+          online += 0
+          time = new Date().toString()
+          return
+        }
+
         online = online + serv.timestamps[serv.timestamps.length - 1].amountPlayers
         time = serv.timestamps[serv.timestamps.length - 1].date
       })

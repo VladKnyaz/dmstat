@@ -1,12 +1,11 @@
 import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { CreateServerDto } from "./dto/create-server.dto";
-import { UpdateServerDto } from "./dto/update-server.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ServerEntity } from "./entities/server.entity";
 import { Repository } from "typeorm";
 import { ProjectService } from "src/project/project.service";
-import { Cron, Interval } from "@nestjs/schedule";
-import { IProject, IServerFromRagemp } from "src/shared/types";
+import { Interval } from "@nestjs/schedule";
+import { IProject } from "src/shared/types";
 import { ProjectEntity } from "src/project/entities/project.entity";
 import { TimestampServerEntity } from "./entities/timestamp.entity";
 
@@ -23,8 +22,6 @@ export class ServerService {
 
   async create(createServerDto: CreateServerDto) {
     const isX2 = createServerDto.serverName.includes("X2")
-
-
 
     createServerDto.serverName =
       createServerDto.serverName.replace(/\s*\[.*?\]\s*/g, '') // Убираем все квадратные скобки
@@ -44,9 +41,33 @@ export class ServerService {
 
     createServerDto.serverName = createServerDto.serverName + (isX2 ? ' X2' : '');
 
-    console.log(">>>>>Server Name:", createServerDto.serverName)
+    const servers = await this.serverRepository.find({ relations: ['timestamps'] })
 
-    return await this.serverRepository.save(createServerDto);
+    let maxLen = 0;
+    let serverWithMaxLengthTimestamps: ServerEntity;
+
+    servers.forEach(serv => {
+      if (!serv.timestamps) return;
+      if (serv.timestamps.length > maxLen) {
+        serverWithMaxLengthTimestamps = serv;
+        maxLen = serv.timestamps.length
+      }
+    })
+
+    const server = await this.serverRepository.save(createServerDto);
+
+    this.timestampRepository.create()
+
+    serverWithMaxLengthTimestamps.timestamps.forEach((stamp) => {
+      const servStamp = this.timestampRepository.create({
+        server: server,
+        date: stamp.date,
+        amountPlayers: 0
+      })
+      this.timestampRepository.save(servStamp)
+    })
+
+    return server
   }
 
   async findAll() {

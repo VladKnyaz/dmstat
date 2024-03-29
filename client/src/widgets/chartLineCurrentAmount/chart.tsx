@@ -61,12 +61,22 @@ const ChartLineCurrentAmount: FC = () => {
     tooltip: {
       custom({ dataPointIndex, w }) {
         let text = ``;
+        let data: { color: string; online: number }[] = [];
         w.globals.initialSeries.forEach((opts: any, index: number) => {
           const color = w.globals.colors[index];
           const currentOnline = opts.data[dataPointIndex];
-          text += `<div class="tooltipPie" style="border: 2px solid ${color}; margin-bottom: 14px">
-              <strong>${currentOnline}</strong>  
-            </div>`;
+          data.push({
+            color,
+            online: currentOnline,
+          });
+        });
+
+        data = data.sort((a, b) => b.online - a.online);
+
+        data.forEach((project) => {
+          text += `<div class="tooltipPie" style="border: 2px solid ${project.color}; margin-bottom: 14px">
+          <strong>${project.online}</strong>  
+        </div>`;
         });
 
         return text;
@@ -193,6 +203,10 @@ const ChartLineCurrentAmount: FC = () => {
 
             currentTimeOnline += stmp ? stmp.amountPlayers : 0;
           });
+
+          if (!currentTimeOnline && currentTimeOnline !== 0) {
+            currentTimeOnline = 0;
+          }
 
           dataAmountPlayers.push(currentTimeOnline);
         });

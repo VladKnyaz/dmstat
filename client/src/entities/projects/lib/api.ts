@@ -6,6 +6,14 @@ export interface IPlayersInfoAmount {
     max: number;
 }
 
+export interface IProjectCurrentOnline {
+    projectName: string,
+    projectId: string,
+    currentOnline: number,
+    time: string,
+    color: string
+}
+
 export interface IProject {
     id: number;
     projectName: string;
@@ -84,10 +92,16 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
 
             })
         }),
+        getProjectsCurrent: builder.query<IProjectCurrentOnline[], void>({
+            query: (body) => ({
+                url: `/projects/get/current`,
+                method: "GET",
+            })
+        }),
     }),
     overrideExisting: true,
 })
 
 
 
-export const { useGetProjectsQuery, useAddProjectMutation, useDeleteProjectMutation, useGetProjectQuery } = projectsApi;     
+export const { useGetProjectsQuery, useAddProjectMutation, useDeleteProjectMutation, useGetProjectQuery, useGetProjectsCurrentQuery } = projectsApi;     

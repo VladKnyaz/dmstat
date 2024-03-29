@@ -22,3 +22,11 @@ export interface IServerFromRagemp {
   players: IPlayersInfoAmount;
   idInDatabase?: number;
 }
+
+export interface IProjectCurrentOnline {
+  projectName: string,
+  projectId: string,
+  currentOnline: number,
+  time: string,
+  color: string
+}

@@ -2,7 +2,7 @@ import { Row, Col, Typography, Flex } from "antd";
 import { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
-import { useGetProjectsQuery } from "../../entities/projects";
+import { useGetProjectsCurrentQuery } from "../../entities/projects";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
@@ -79,46 +79,40 @@ const ChartColumnCurrentAmount: FC = () => {
     tooltip: { enabled: false },
   };
 
-  const { data, isLoading, isSuccess } = useGetProjectsQuery({
-    isRelations: true,
-  });
+  const {
+    data: dataCurrent,
+    isLoading,
+    isSuccess,
+  } = useGetProjectsCurrentQuery();
 
   useEffect(() => {
-    if (data) {
-      let arrSeries: any = [];
+    if (dataCurrent) {
+      let arrSeries: any[] = [];
       let arrColors: string[] = [];
       let names: [string, string][] = [];
       let onlines: number[] = [];
       let time: string;
       let arrProjectInfo: { projectName: string; online: number }[] = [];
 
-      data.forEach((project) => {
+      dataCurrent.forEach((project) => {
         arrColors.push(project.color);
-        let currentTimeOnline = 0;
-        project.servers?.forEach((server) => {
-          if (server.timestamps) {
-            let stmp = server.timestamps[server.timestamps.length - 1];
-            if (stmp) {
-              currentTimeOnline += stmp ? stmp.amountPlayers : 0;
-              time = moment.utc(stmp.date).format("HH:mm");
-            }
-          }
-        });
-
+        time = moment.utc(project.time).format("HH:mm");
         names.push([
           project.projectName,
-          `В ${time ? time : "-"}: ${currentTimeOnline}`,
+          `В ${time}: ${project.currentOnline}`,
         ]);
 
-        onlines.push(currentTimeOnline);
         arrProjectInfo.push({
           projectName: project.projectName,
-          online: currentTimeOnline,
+          online: project.currentOnline,
         });
       });
-      arrProjectInfo.forEach((prj) => {
-        setAllOnline((prev) => prj.online + prev);
+
+      dataCurrent.forEach((prj) => {
+        setAllOnline((prev) => prj.currentOnline + prev);
       });
+
+      onlines = dataCurrent.map((proj) => proj.currentOnline);
 
       arrSeries.push({
         data: onlines,
@@ -131,8 +125,7 @@ const ChartColumnCurrentAmount: FC = () => {
       setSeries(arrSeries);
       setCategories(names);
     }
-  }, [data]);
-  console.log(projectInfo);
+  }, [dataCurrent]);
 
   const chartOptionsPie: ApexCharts.ApexOptions = {
     chart: {

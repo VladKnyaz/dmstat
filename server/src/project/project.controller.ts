@@ -29,6 +29,11 @@ export class ProjectController {
     return await this.projectService.findAll(query.isRelations);
   }
 
+  @Get("/get/current")
+  async getCurrentOnline() {
+    return await this.projectService.getProjectsCurrentOnline();
+  }
+
   @Get(":projectName")
   async findOne(@Param("projectName") projectName: string) {
     return this.projectService.findOneByName(projectName);

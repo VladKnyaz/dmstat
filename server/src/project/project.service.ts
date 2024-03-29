@@ -8,7 +8,7 @@ import { ServerEntity } from "src/server/entities/server.entity";
 import { TimestampProjectEntity } from "./entities/timestamp.entity";
 import { Cron, Interval } from "@nestjs/schedule";
 import { HttpService } from "@nestjs/axios";
-import { IProject } from "src/shared/types";
+import { IProject, IProjectCurrentOnline } from "src/shared/types";
 import { ServerService } from "src/server/server.service";
 
 @Injectable()
@@ -127,6 +127,36 @@ export class ProjectService {
 
       this.timestampRepository.save(prj);
     });
+  }
+
+  async getProjectsCurrentOnline() {
+    let projectsInDB = await this.findAll(true);
+    let projects: IProjectCurrentOnline[] = []
+
+    projectsInDB.forEach((project) => {
+      let online = 0;
+      let time: string;
+
+      project.servers.forEach((serv) => {
+        online = online + serv.timestamps[serv.timestamps.length - 1].amountPlayers
+        time = serv.timestamps[serv.timestamps.length - 1].date
+      })
+
+      projects.push({
+        projectName: project.projectName,
+        projectId: project.projectId,
+        currentOnline: online,
+        time,
+        color: project.color
+      })
+    })
+
+    let dataProjects: IProjectCurrentOnline[] = []
+
+    dataProjects = projects.sort((ap, bp) => bp.currentOnline - ap.currentOnline)
+
+    return dataProjects
+
   }
 
   async findAll(isRelations: boolean = false) {

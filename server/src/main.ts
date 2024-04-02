@@ -6,13 +6,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
-    origin: [
-      "localhost:3000",
-      "http://localhost:3000",
-      "https://localhost:3000",
-      "https://parser.gta5dm.pro",
-      "*"
-    ],
+    // origin: [
+    //   "localhost:3000",
+    //   "http://localhost:3000",
+    //   "https://localhost:3000",
+    //   "https://parser.gta5dm.pro",
+    //   "*"
+    // ],
+    origin: true,
     credentials: true,
   });
   await app.listen(3000);

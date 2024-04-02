@@ -191,6 +191,8 @@ export class ProjectService {
 
   async findAll(isRelations: boolean = false) {
     if (this.kek) {
+      console.log('"cache"');
+
       return this.kek
     }
 

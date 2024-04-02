@@ -10,7 +10,8 @@ async function bootstrap() {
       "localhost:3000",
       "http://localhost:3000",
       "https://localhost:3000",
-      "https://parser.gta5dm.pro"
+      "https://parser.gta5dm.pro",
+      "*"
     ],
     credentials: true,
   });

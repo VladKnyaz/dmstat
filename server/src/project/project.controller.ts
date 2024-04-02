@@ -14,6 +14,8 @@ import { UpdateProjectDto } from "./dto/update-project.dto";
 import { Cron, Interval } from "@nestjs/schedule";
 import { DeleteProjectDto } from "./dto/delete-project.dto";
 
+import * as fs from "fs"
+
 @Controller("projects")
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
@@ -23,10 +25,19 @@ export class ProjectController {
     return await this.projectService.create(createProjectDto);
   }
 
-  @Get()
-  async findAll(@Query() query: { isRelations: boolean }) {
+  @Get('findall2222222222')
+  async findAllQuery(@Query() query: { isRelations: boolean }) {
+    return await this.projectService.findAll(true);
+  }
 
-    return await this.projectService.findAll(query.isRelations);
+  @Get()
+  async findAlljson() {
+
+    const test = fs.readFileSync('test.json');
+    //@ts-ignore
+    let a = JSON.parse(test)
+    return a
+
   }
 
   @Get("/get/current")

@@ -11,6 +11,8 @@ import { HttpService } from "@nestjs/axios";
 import { IProject, IProjectCurrentOnline } from "src/shared/types";
 import { ServerService } from "src/server/server.service";
 
+import * as fs from 'fs'
+
 @Injectable()
 export class ProjectService {
   private kek;
@@ -189,13 +191,10 @@ export class ProjectService {
 
   }
 
-  async findAll(isRelations: boolean = false) {
-    if (this.kek) {
-      console.log('"cache"');
 
-      return this.kek
-    }
 
+  @Interval(1000 * 60 * 5)
+  async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)
 
@@ -208,7 +207,11 @@ export class ProjectService {
     console.log("Finish", finish)
     //@ts-ignore
     console.log("Time", `${finish - start}ms`)
+
+    fs.writeFileSync('test.json', JSON.stringify(test))
+
     return test
+
   }
 
   findOneById(id: number) {

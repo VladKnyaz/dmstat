@@ -191,8 +191,7 @@ export class ProjectService {
 
   async findAll(isRelations: boolean = false) {
     if (this.kek) {
-      console.log(this.kek);
-
+      return this.kek
     }
 
     const start = new Date()

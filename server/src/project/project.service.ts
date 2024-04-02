@@ -13,6 +13,7 @@ import { ServerService } from "src/server/server.service";
 
 @Injectable()
 export class ProjectService {
+  private kek;
   constructor(
     @InjectRepository(ProjectEntity)
     private projectRepository: Repository<ProjectEntity>,
@@ -153,6 +154,7 @@ export class ProjectService {
 
   async getProjectsCurrentOnline() {
     let projectsInDB = await this.findAll(true);
+    this.kek = projectsInDB
     let projects: IProjectCurrentOnline[] = []
 
     projectsInDB.forEach((project) => {
@@ -188,6 +190,11 @@ export class ProjectService {
   }
 
   async findAll(isRelations: boolean = false) {
+    if (this.kek) {
+      console.log(this.kek);
+
+    }
+
     const start = new Date()
     console.log("Start", start)
 

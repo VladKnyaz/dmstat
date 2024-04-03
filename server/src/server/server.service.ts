@@ -8,6 +8,11 @@ import { Interval } from "@nestjs/schedule";
 import { IProject } from "src/shared/types";
 import { ProjectEntity } from "src/project/entities/project.entity";
 import { TimestampServerEntity } from "./entities/timestamp.entity";
+import * as momenttz from 'moment-timezone';
+import * as moment from 'moment';
+import * as fs from 'fs'
+
+
 
 @Injectable()
 export class ServerService {
@@ -103,15 +108,17 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
    */
-  @Interval(2.5 * 60 * 1000)
+  @Interval(0.05 * 60 * 1000)
   async saveTimestampServer() {
+    const currentDate = new Date().toString()
+
+    console.log(moment(new Date()));
     try {
       const projectsFromRagemp: IProject[] =
         await this.projectService.getProjectsFromRagempByDatabase();
 
       if (!projectsFromRagemp) return;
 
-      const currentDate = new Date().toString();
 
       projectsFromRagemp.forEach(async (project) => {
         const findProjectInDatabase: ProjectEntity = await this.projectService.findOneById(

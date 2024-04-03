@@ -134,7 +134,6 @@ export class ProjectService {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
     const currentDate = new Date();
-
     projectsFromRagemp.forEach(async (project) => {
       const projectFromDatabase = await this.projectRepository.findOne({
         where: {

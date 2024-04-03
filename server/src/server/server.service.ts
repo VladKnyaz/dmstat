@@ -108,11 +108,11 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
    */
-  @Interval(2.5 * 60 * 1000)
+  @Interval(0.02 * 60 * 1000)
   async saveTimestampServer() {
     const currentDate = new Date().toString()
 
-    console.log(moment(new Date()));
+    console.log(new Date().getTimezoneOffset());
     try {
       const projectsFromRagemp: IProject[] =
         await this.projectService.getProjectsFromRagempByDatabase();

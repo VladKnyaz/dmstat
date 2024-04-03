@@ -108,7 +108,7 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
    */
-  @Interval(0.05 * 60 * 1000)
+  @Interval(2.5 * 60 * 1000)
   async saveTimestampServer() {
     const currentDate = new Date().toString()
 

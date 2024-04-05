@@ -6,12 +6,16 @@ import { ProjectEntity } from "./entities/project.entity";
 import { TimestampProjectEntity } from "./entities/timestamp.entity";
 import { HttpModule } from "@nestjs/axios";
 import { ServerModule } from "src/server/server.module";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { AuthModule } from "src/auth/auth.module";
 
 @Module({
   imports: [
     HttpModule,
     forwardRef(() => ServerModule),
+    AuthModule,
     TypeOrmModule.forFeature([ProjectEntity, TimestampProjectEntity]),
+
   ],
   controllers: [ProjectController],
   providers: [ProjectService],

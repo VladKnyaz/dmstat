@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
@@ -15,8 +16,10 @@ import { Cron, Interval } from "@nestjs/schedule";
 import { DeleteProjectDto } from "./dto/delete-project.dto";
 
 import * as fs from "fs"
+import { JwtAuthGuard } from "src/auth/auth-jwt.guard";
 
 @Controller("projects")
+@UseGuards(JwtAuthGuard)
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
 
@@ -37,6 +40,8 @@ export class ProjectController {
     //@ts-ignore
     let a = JSON.parse(test)
     return a
+
+
 
   }
 

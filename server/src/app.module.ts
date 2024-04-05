@@ -10,6 +10,9 @@ import { TimestampServerEntity } from "./server/entities/timestamp.entity";
 import { ProjectEntity } from "./project/entities/project.entity";
 import { ScheduleModule } from "@nestjs/schedule";
 import 'dotenv/config'
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
+import { UserEntity } from "./user/entities/user.entity";
 
 @Module({
   imports: [
@@ -20,16 +23,26 @@ import 'dotenv/config'
       port: Number(process.env.DATABASE_PORT),
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
+
       entities: [
         ServerEntity,
         TimestampProjectEntity,
         TimestampServerEntity,
         ProjectEntity,
+        UserEntity
       ],
+      extra: {
+        poolSize: 20,
+        connectionTimeoutMillis: 2000,
+        query_timeout: 1000,
+        statement_timeout: 1000
+      },
       synchronize: true, // убрать при продакшене
     }),
     ProjectModule,
     ServerModule,
+    AuthModule,
+    UserModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],

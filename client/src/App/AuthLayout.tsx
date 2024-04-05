@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { RootState } from "../shared/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useValidQuery } from "../entities/user";
@@ -12,12 +12,12 @@ interface IProps {
 }
 
 const AuthLayout: FC<IProps> = ({ children }) => {
-  const isAuth = useSelector((state: RootState) => state.user.isAuth);
+  // const isAuth = useSelector((state: RootState) => state.user.isAuth);
   const token = useSelector((state: RootState) => state.user.token);
   const isLoading = useSelector((state: RootState) => state.user.isLoading);
   const dispatch = useDispatch();
 
-  const { refetch, data } = useValidQuery();
+  const { data } = useValidQuery();
 
   useEffect(() => {
     if (data) {

@@ -1,6 +1,6 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import "./App.css";
-import { Layout, message, Spin } from "antd";
+import { Layout} from "antd";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "../pages/home/";
 import { Menu } from "../widgets/menu";
@@ -9,11 +9,8 @@ import { Admin } from "../pages/admin/";
 import { ChartLineCurrentAmount } from "../widgets/chartLineCurrentAmount";
 import { Project } from "../pages/project";
 import LoginPage from "./../pages/login/login";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../shared/store";
-
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
 
 const App: FC = () => {
   const { Content } = Layout;

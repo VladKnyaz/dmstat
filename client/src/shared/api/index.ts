@@ -9,7 +9,7 @@ const url = 'https://backend.gta5dm.pro/'
 
 const baseQuery = fetchBaseQuery({
     baseUrl: url,
-    prepareHeaders: (headers, getState) => {
+    prepareHeaders: (headers) => {
         let token = cookies.get('token');
 
         if (token) {

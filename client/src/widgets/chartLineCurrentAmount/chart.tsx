@@ -173,20 +173,13 @@ const ChartLineCurrentAmount: FC = () => {
         let dataAmountPlayers: number[] = [];
 
         project.servers?.forEach((server) => {
-          if (
-            server.timestamps &&
-            server.timestamps.length > arrTimestamps.length
-          ) {
-            arrTimestamps = server.timestamps.map((stamp) =>
-              new Date(stamp.date).getTime()
-            );
+          if (server.timestamps && server.timestamps.length > arrTimestamps.length) {
+            arrTimestamps = server.timestamps.map((stamp) => new Date(stamp.date).getTime());
 
             let lengthStamp = server.timestamps.length;
 
             const minDated = new Date(server.timestamps[0].date).getTime();
-            const maxDated = new Date(
-              server.timestamps[lengthStamp - 1].date
-            ).getTime();
+            const maxDated = new Date(server.timestamps[lengthStamp - 1].date).getTime();
 
             setMinDate(minDated);
             if (lengthStamp > 1) setMaxDate(maxDated);
@@ -234,16 +227,8 @@ const ChartLineCurrentAmount: FC = () => {
 
         {isSuccess && (
           <div className="chart" style={{ maxWidth: "100%" }}>
-            <ApexChart
-              options={chartOptions}
-              series={series}
-              height={500}
-            ></ApexChart>
-            <ApexChart
-              options={options2}
-              series={series}
-              height={100}
-            ></ApexChart>
+            <ApexChart options={chartOptions} series={series} height={500}></ApexChart>
+            <ApexChart options={options2} series={series} height={100}></ApexChart>
           </div>
         )}
       </Col>

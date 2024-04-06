@@ -214,7 +214,7 @@ export class ProjectService {
   }
 
 
-  @Interval(10 * 60 * 5)
+  @Interval(1000 * 60 * 5)
   async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)

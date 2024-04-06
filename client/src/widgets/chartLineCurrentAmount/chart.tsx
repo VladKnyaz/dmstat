@@ -2,7 +2,7 @@ import { Row, Col, Typography, Flex } from "antd";
 import { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
-import { useGetProjectsQuery } from "../../entities/projects";
+import { useGetProjectsMainInfoQuery, useGetProjectsQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
 
 const ChartLineCurrentAmount: FC = () => {
@@ -162,51 +162,39 @@ const ChartLineCurrentAmount: FC = () => {
     isRelations: true,
   });
 
+  const {
+    data: infoPorjects,
+    isLoading: isLoadingProjects,
+    isSuccess: isSuccessProjects,
+  } = useGetProjectsMainInfoQuery();
+
   useEffect(() => {
-    if (data) {
+    if (data && infoPorjects) {
+      console.log(data);
+
       let arrSeries: any = [];
-      let arrTimestamps: number[] = [];
+      let arrTimestamps: number[] = data.map((project) => new Date(project.time).getTime());
       let arrColors: string[] = [];
 
-      data.forEach((project) => {
+      infoPorjects.forEach((project) => {
         arrColors.push(project.color);
-        let dataAmountPlayers: number[] = [];
+      });
 
-        project.servers?.forEach((server) => {
-          if (server.timestamps && server.timestamps.length > arrTimestamps.length) {
-            arrTimestamps = server.timestamps.map((stamp) => new Date(stamp.date).getTime());
+      const datalength = data.length;
 
-            let lengthStamp = server.timestamps.length;
+      const minDated = new Date(data[0].time).getTime();
+      const maxDated = new Date(data[datalength - 1].time).getTime();
+      setMinDate(minDated);
+      if (datalength > 1) setMaxDate(maxDated);
 
-            const minDated = new Date(server.timestamps[0].date).getTime();
-            const maxDated = new Date(server.timestamps[lengthStamp - 1].date).getTime();
-
-            setMinDate(minDated);
-            if (lengthStamp > 1) setMaxDate(maxDated);
-          }
+      infoPorjects.forEach((inPro) => {
+        let players = data.map((project) => {
+          if (project[inPro.projectName]) return project[inPro.projectName];
+          return 0;
         });
-
-        arrTimestamps.forEach((mainStampTime) => {
-          let currentTimeOnline = 0;
-
-          project.servers?.forEach((server) => {
-            let stmp = server.timestamps?.find(
-              (tms) => mainStampTime == new Date(tms.date).getTime()
-            );
-
-            currentTimeOnline += stmp ? stmp.amountPlayers : 0;
-          });
-
-          if (!currentTimeOnline && currentTimeOnline !== 0) {
-            currentTimeOnline = 0;
-          }
-
-          dataAmountPlayers.push(currentTimeOnline);
-        });
-
         arrSeries.push({
-          name: project.projectName,
-          data: dataAmountPlayers,
+          name: inPro.projectName,
+          data: players,
         });
       });
 
@@ -214,7 +202,7 @@ const ChartLineCurrentAmount: FC = () => {
       setSeries(arrSeries);
       setCategories(arrTimestamps);
     }
-  }, [data]);
+  }, [data, infoPorjects]);
 
   return (
     <Row>

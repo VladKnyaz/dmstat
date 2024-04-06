@@ -16,14 +16,9 @@ export interface IProjectCurrentOnline {
 
 export interface IProject {
     id: number;
+    projectId: string;
     projectName: string;
     color: string;
-    servers?: IServer[];
-    timestamps?: {
-        id: number;
-        date: string;
-        peak: number;
-    }[];
 }
 
 export interface IServer {
@@ -51,11 +46,15 @@ interface IGetProjects {
 }
 
 
+export type IProjectInfo = { time: Date | string; } & {
+    [key: string]: string | number;
+}
+
 const projectsApiWithTag = api.enhanceEndpoints({ addTagTypes: ['Project', 'ProjectCurrent'] })
 
 const projectsApi = projectsApiWithTag.injectEndpoints({
     endpoints: (builder) => ({
-        getProjects: builder.query<IProject[], IGetProjects>({
+        getProjects: builder.query<IProjectInfo[], IGetProjects>({
             query: (params) => ({
                 url: '/projects',
                 method: 'GET',
@@ -65,6 +64,12 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
 
             }),
             providesTags: ['Project']
+        }),
+        getProjectsMainInfo: builder.query<IProject[], void>({
+            query: () => ({
+                url: '/projects/main',
+                method: 'GET',
+            }),
         }),
         addProject: builder.mutation<IProject, IAddProject>({
             query: (body) => ({
@@ -105,4 +110,4 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
 
 
 
-export const { useGetProjectsQuery, useAddProjectMutation, useDeleteProjectMutation, useGetProjectQuery, useGetProjectsCurrentQuery } = projectsApi;     
+export const { useGetProjectsQuery, useAddProjectMutation, useDeleteProjectMutation, useGetProjectQuery, useGetProjectsCurrentQuery, useGetProjectsMainInfoQuery } = projectsApi;     

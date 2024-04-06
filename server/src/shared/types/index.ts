@@ -7,7 +7,7 @@ export interface IPlayersInfoAmount {
 export interface IProject {
   id: string;
   servers: IServerFromRagemp[];
-  projectId: string;
+  projectId: string; 
   gamemode: string;
   url: string;
   lang: string[];

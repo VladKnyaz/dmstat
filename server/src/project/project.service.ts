@@ -156,45 +156,65 @@ export class ProjectService {
   }
 
   async getProjectsCurrentOnline() {
-    let projectsInDB = await this.findAll(true);
-    this.kek = projectsInDB
-    let projects: IProjectCurrentOnline[] = []
+    try {
+      const projectsInDB = await this.findMainInfo();
+      const onlineInfoFile = fs.readFileSync('projectsInfo.json');
 
-    projectsInDB.forEach((project) => {
-      let online = 0;
-      let time: string;
+      if (!onlineInfoFile || !projectsInDB) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
+      //@ts-ignore
+      const onlineInfo: any[] = JSON.parse(onlineInfoFile)
 
-      project.servers.forEach((serv) => {
-        if (serv.timestamps.length < 1) {
-          online += 0
-          time = new Date().toString()
-          return
-        }
+      if (!onlineInfo) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
 
-        online = online + serv.timestamps[serv.timestamps.length - 1].amountPlayers
-        time = serv.timestamps[serv.timestamps.length - 1].date
+      let projects: IProjectCurrentOnline[] = []
+
+      projectsInDB.forEach((project) => {
+        let online = 0;
+        let time: string;
+
+        let onlineIfnoLength = onlineInfo.length
+
+        // project.servers.forEach((serv) => {
+        //   if (serv.timestamps.length < 1) {
+        //     online += 0
+        //     time = new Date().toString()
+        //     return
+        //   }
+
+        //   online = online + serv.timestamps[serv.timestamps.length - 1].amountPlayers
+        //   time = serv.timestamps[serv.timestamps.length - 1].date
+        // })
+
+        projects.push({
+          projectName: project.projectName,
+          projectId: project.projectId,
+          currentOnline: onlineInfo[onlineIfnoLength - 1][project.projectName],
+          time: onlineInfo[onlineIfnoLength - 1].time,
+          color: project.color
+        })
       })
 
-      projects.push({
-        projectName: project.projectName,
-        projectId: project.projectId,
-        currentOnline: online,
-        time,
-        color: project.color
-      })
-    })
+      let dataProjects: IProjectCurrentOnline[] = []
 
-    let dataProjects: IProjectCurrentOnline[] = []
+      dataProjects = projects.sort((ap, bp) => bp.currentOnline - ap.currentOnline)
 
-    dataProjects = projects.sort((ap, bp) => bp.currentOnline - ap.currentOnline)
+      return dataProjects
+    } catch (e) {
 
-    return dataProjects
+      console.log(e);
+
+      throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
+    }
 
   }
 
 
+  async findMainInfo() {
+    return this.projectRepository.find()
+  }
 
-  @Interval(1000 * 60 * 5)
+
+  @Interval(10 * 60 * 5)
   async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)
@@ -202,16 +222,49 @@ export class ProjectService {
     let relationsArray = ["servers", "servers.timestamps", "timestamps"];
 
     if (!isRelations) relationsArray = [];
-    let test = await this.projectRepository.find({ relations: relationsArray });
+    let allProjectsData = await this.projectRepository.find({ relations: relationsArray });
+
+    let newDataProjectData = []
+
+    let arrTimestamps: number[] = [];
+
+    allProjectsData.forEach((project) => {
+      // Считаем самый большой отрезок времени
+      project.servers?.forEach((server) => {
+        if (server.timestamps && server.timestamps.length > arrTimestamps.length) {
+          arrTimestamps = server.timestamps.map((stamp) => new Date(stamp.date).getTime());
+        }
+      });
+    });
+
+    arrTimestamps.forEach((currentTime) => {
+      let projects = {}
+      allProjectsData.forEach(project => {
+        let aa: number = 0
+        project.servers.forEach(server => {
+          let data = server.timestamps.find(ti => new Date(ti.date).getTime() === currentTime)
+          if (data) {
+            aa += data.amountPlayers
+          }
+        })
+
+        projects[project.projectName] = aa;
+      })
+
+      newDataProjectData.push({
+        time: new Date(currentTime),
+        ...projects
+      })
+    })
+
+    fs.writeFileSync('projectsInfo.json', JSON.stringify(newDataProjectData))
 
     const finish = new Date()
     console.log("Finish", finish)
     //@ts-ignore
     console.log("Time", `${finish - start}ms`)
 
-    fs.writeFileSync('test.json', JSON.stringify(test))
-
-    return test
+    return newDataProjectData
 
   }
 

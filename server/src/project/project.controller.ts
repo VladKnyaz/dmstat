@@ -35,15 +35,17 @@ export class ProjectController {
 
   @Get()
   async findAlljson() {
-
-    const test = fs.readFileSync('test.json');
+    const onlineInfoFile = fs.readFileSync('projectsInfo.json');
     //@ts-ignore
-    let a = JSON.parse(test)
-    return a
-
-
+    return JSON.parse(onlineInfoFile)
 
   }
+
+  @Get('/main')
+  async findAllMainInfo() {
+    return await this.projectService.findMainInfo();
+  }
+
 
   @Get("/get/current")
   async getCurrentOnline() {

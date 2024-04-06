@@ -78,9 +78,8 @@ const ChartLinePeaks: FC = () => {
           <strong>${project.online}</strong>  
         </div>`;
         });
-        
-        return text;
 
+        return text;
       },
     },
     legend: {
@@ -170,23 +169,27 @@ const ChartLinePeaks: FC = () => {
       let arrColors: string[] = [];
 
       data.forEach((project) => {
+        //@ts-ignore
         arrColors.push(project.color);
 
         if (
           project.timestamps &&
+          //@ts-ignore
+
           project.timestamps.length > arrTimestamps.length
         ) {
-          arrTimestamps = project.timestamps.map((stamp) =>
-            new Date(stamp.date).getTime()
-          );
+          //@ts-ignore
+
+          arrTimestamps = project.timestamps.map((stamp) => new Date(stamp.date).getTime());
+          //@ts-ignore
 
           let lengthStamp = project.timestamps.length;
+          //@ts-ignore
 
           const minDated = new Date(project.timestamps[0].date).getTime();
+          //@ts-ignore
 
-          const maxDated = new Date(
-            project.timestamps[lengthStamp - 1].date
-          ).getTime();
+          const maxDated = new Date(project.timestamps[lengthStamp - 1].date).getTime();
 
           setMinDate(minDated);
 
@@ -196,7 +199,11 @@ const ChartLinePeaks: FC = () => {
         let dataPeak: number[] = [];
 
         arrTimestamps.forEach((mainStampTime) => {
+          //@ts-ignore
+
           let timestampInProject = project.timestamps!.find(
+            //@ts-ignore
+
             (tms) => new Date(tms.date).getTime() == mainStampTime
           );
           dataPeak.push(timestampInProject ? timestampInProject.peak : 0);
@@ -224,16 +231,8 @@ const ChartLinePeaks: FC = () => {
 
         {isSuccess && (
           <div className="chart" style={{ maxWidth: "100%" }}>
-            <ApexChart
-              options={chartOptions}
-              series={series}
-              height={500}
-            ></ApexChart>
-            <ApexChart
-              options={options2}
-              series={series}
-              height={100}
-            ></ApexChart>
+            <ApexChart options={chartOptions} series={series} height={500}></ApexChart>
+            <ApexChart options={options2} series={series} height={100}></ApexChart>
           </div>
         )}
       </Col>

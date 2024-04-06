@@ -164,8 +164,6 @@ const ChartLineCurrentAmount: FC = () => {
 
   const {
     data: infoPorjects,
-    isLoading: isLoadingProjects,
-    isSuccess: isSuccessProjects,
   } = useGetProjectsMainInfoQuery();
 
   useEffect(() => {

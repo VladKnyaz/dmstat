@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from "react";
 import { Button, Empty, Flex, Form, Select, notification } from "antd";
 
 import {
-  useGetProjectsQuery,
   useDeleteProjectMutation,
+  useGetProjectsMainInfoQuery,
 } from "../../../entities/projects";
 
 interface ISelectValues {
@@ -23,7 +23,7 @@ const DeleteProject: FC = () => {
     });
   };
 
-  const { data: dataProjects, isLoading, isSuccess } = useGetProjectsQuery({});
+  const { data: dataProjects, isLoading, isSuccess } = useGetProjectsMainInfoQuery();
 
   const [deleteProject] = useDeleteProjectMutation();
 
@@ -62,10 +62,7 @@ const DeleteProject: FC = () => {
     <Flex gap={20} vertical>
       {contextHolder}
       <Form onFinish={onFinish}>
-        <Form.Item
-          name="projectName"
-          rules={[{ required: true, message: "Обязательно" }]}
-        >
+        <Form.Item name="projectName" rules={[{ required: true, message: "Обязательно" }]}>
           <Select
             style={{ width: "100%" }}
             placeholder="Выберите проект"

@@ -10,11 +10,7 @@ import { ChartLineServer } from "./../../entities/chartLineServer";
 const Project: FC = () => {
   const params = useParams();
   let projectName = params.projectName;
-  const {
-    data: projectData,
-    isLoading,
-    isError,
-  } = useGetProjectQuery({ projectName });
+  const { data: projectData, isLoading, isError } = useGetProjectQuery({ projectName });
 
   const [online, setOnline] = useState(0);
   const { Title, Text } = Typography;
@@ -22,6 +18,7 @@ const Project: FC = () => {
   useEffect(() => {
     if (projectData) {
       let currentTimeOnline = 0;
+      //@ts-ignore
       projectData.servers?.forEach((server) => {
         if (server.timestamps) {
           let stmp = server.timestamps[server.timestamps.length - 1];
@@ -36,8 +33,11 @@ const Project: FC = () => {
   }, [projectData]);
 
   const getAvgOnline = () => {
+    //@ts-ignore
     return projectData?.servers
-      ? Math.floor(online / projectData.servers.length)
+      ? //@ts-ignore
+
+        Math.floor(online / projectData.servers.length)
       : 0;
   };
 
@@ -56,7 +56,14 @@ const Project: FC = () => {
               <Title level={5}>Информация</Title>
               <Flex vertical>
                 <Text>Название: {projectData.projectName}</Text>
-                <Text>Количество серверов: {projectData.servers?.length}</Text>
+
+                <Text>
+                  Количество серверов:{" "}
+                  {
+                    //@ts-ignore
+                    projectData.servers?.length
+                  }
+                </Text>
                 <Text>
                   Полный онлайн: {online} (Средний: {getAvgOnline()})
                 </Text>
@@ -68,23 +75,23 @@ const Project: FC = () => {
             </Col>
           </Flex>
           <Flex vertical={isMobile} wrap="wrap">
-            {projectData.servers?.map((server) => {
-              return (
-                <Col
-                  key={server.serverId}
-                  style={{ width: isMobile ? "100%" : "50%" }}
-                >
-                  <Title level={5} style={{ textAlign: "center" }}>
-                    {server.serverName}
-                  </Title>
-                  <ChartLineServer
-                    key={server.serverId}
-                    color={projectData.color}
-                    server={server}
-                  />
-                </Col>
-              );
-            })}
+            {
+              //@ts-ignore
+              projectData.servers?.map((server) => {
+                return (
+                  <Col key={server.serverId} style={{ width: isMobile ? "100%" : "50%" }}>
+                    <Title level={5} style={{ textAlign: "center" }}>
+                      {server.serverName}
+                    </Title>
+                    <ChartLineServer
+                      key={server.serverId}
+                      color={projectData.color}
+                      server={server}
+                    />
+                  </Col>
+                );
+              })
+            }
           </Flex>
         </Col>
       )}

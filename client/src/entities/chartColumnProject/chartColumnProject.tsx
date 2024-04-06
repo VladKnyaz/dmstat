@@ -62,11 +62,10 @@ const ChartColumnProject: FC<{ projectData: IProject }> = ({ projectData }) => {
       let onlines: number[] = [];
       arrColors.push(projectData.color);
 
+      //@ts-ignore
       projectData.servers?.forEach((server) => {
         if (server.timestamps) {
-          onlines.push(
-            server.timestamps[server.timestamps.length - 1].amountPlayers
-          );
+          onlines.push(server.timestamps[server.timestamps.length - 1].amountPlayers);
         }
       });
 
@@ -76,7 +75,11 @@ const ChartColumnProject: FC<{ projectData: IProject }> = ({ projectData }) => {
 
       setColors(arrColors);
       setSeries(arrSeries);
+      //@ts-ignore
+
       if (projectData.servers) {
+        //@ts-ignore
+
         let cat: number[] = projectData.servers.map((_s, index) => index + 1);
         setCategories(cat);
       }
@@ -85,12 +88,7 @@ const ChartColumnProject: FC<{ projectData: IProject }> = ({ projectData }) => {
 
   return (
     <div className="chart" style={{ maxWidth: "100%" }}>
-      <ApexChart
-        options={chartOptions}
-        series={series}
-        height={300}
-        type="bar"
-      ></ApexChart>
+      <ApexChart options={chartOptions} series={series} height={300} type="bar"></ApexChart>
     </div>
   );
 };

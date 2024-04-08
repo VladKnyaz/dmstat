@@ -255,11 +255,11 @@ export class ProjectService {
       const projectsInDB = await this.findMainInfo();
       const onlineInfoFile = fs.readFileSync('projectsInfo.json');
 
-      if (!onlineInfoFile || !projectsInDB) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
+      if (!onlineInfoFile || !projectsInDB) throw new HttpException('Нет данных1', HttpStatus.NOT_FOUND)
       //@ts-ignore
       const onlineInfo: any[] = JSON.parse(onlineInfoFile)
 
-      if (!onlineInfo || onlineInfo.length < 1) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
+      if (!onlineInfo || onlineInfo.length < 1) throw new HttpException('Нет данных2', HttpStatus.NOT_FOUND)
 
       let projects: IProjectCurrentOnline[] = []
 

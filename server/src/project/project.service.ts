@@ -207,7 +207,7 @@ export class ProjectService {
   }
 
   // @Interval(1000 * 60 * 60 * 24)
-  @Interval(60 * 1000)
+  @Interval(60 * 1000 * 60 * 10)
   async savePeaksFile() {
     let relationsArray = ["timestamps"];
 

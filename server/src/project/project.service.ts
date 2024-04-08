@@ -174,10 +174,9 @@ export class ProjectService {
   /**
    * сохраняет в бд пиковый онлайн проекта в 23:59:59 за этот день
    */
-  // @Cron("59 59 23 * * * ", {
-  //   timeZone: "Europe/Moscow"
-  // })
-  @Interval(60 * 1000)
+  @Cron("59 59 23 * * * ", {
+    timeZone: "Europe/Moscow"
+  })
   async savePeaksProjects() {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
@@ -298,7 +297,7 @@ export class ProjectService {
   }
 
 
-  @Interval(60 * 1000)
+  @Interval(60 * 1000 * 10)
   async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)

@@ -177,7 +177,7 @@ export class ProjectService {
   // @Cron("59 59 23 * * * ", {
   //   timeZone: "Europe/Moscow"
   // })
-  @Interval(1000)
+  @Interval(60 * 1000)
   async savePeaksProjects() {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
@@ -208,7 +208,7 @@ export class ProjectService {
   }
 
   // @Interval(1000 * 60 * 60 * 24)
-  @Interval(1000)
+  @Interval(60 * 1000)
   async savePeaksFile() {
     let relationsArray = ["timestamps"];
 

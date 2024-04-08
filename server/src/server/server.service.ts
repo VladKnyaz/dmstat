@@ -82,16 +82,29 @@ export class ServerService {
   /**
    * Проверяет каждый час есть ли новый сервер
    */
-  @Interval(60 * 1000 * 60)
+  // @Interval(60 * 111 * 60)
+  @Interval(10000)
   async checkingAllServersThereAreInDatabase() {
     try {
-      let projects = await this.projectService.findAll(true)
 
+      const isUpdated = await this.projectService.checkUpdateProjectData()
+      if (!isUpdated) return;
+
+      let projects = await this.projectService.findAllDB()
+      let stop = false
       projects.forEach(async (project) => {
+        if (stop) return;
         let projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectId)
+
         if (!projectInRagempList) {
           projectInRagempList = await this.projectService.getProjectFromRagemp(project.projectId)
-        };
+        }
+
+        if (!projectInRagempList) {
+          stop = true;
+          return
+        }
+
 
         projectInRagempList.servers.forEach(async (rServer) => {
           let isNotNewServer = project.servers.find((server) => server.serverId === rServer.id)
@@ -105,16 +118,16 @@ export class ServerService {
     }
   }
 
+
+
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
    */
   @Interval(1000)
   async saveTimestampServer() {
-    const currentDate = new Date().toString()
-    let test = momenttz(new Date()).utcOffset(180).toString()
-    console.log(test);
-
-    console.log(new Date(test).toString());
+    let currentDate = new Date().toString()
+    let mscDate = momenttz(new Date()).utcOffset(180).toString()
+    currentDate = mscDate;
 
     try {
       const projectsFromRagemp: IProject[] =

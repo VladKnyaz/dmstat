@@ -8,13 +8,14 @@ import { HttpModule } from "@nestjs/axios";
 import { ServerModule } from "src/server/server.module";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { AuthModule } from "src/auth/auth.module";
+import { ServerEntity } from "src/server/entities/server.entity";
 
 @Module({
   imports: [
     HttpModule,
     forwardRef(() => ServerModule),
     AuthModule,
-    TypeOrmModule.forFeature([ProjectEntity, TimestampProjectEntity]),
+    TypeOrmModule.forFeature([ProjectEntity, TimestampProjectEntity, ServerEntity]),
 
   ],
   controllers: [ProjectController],

@@ -10,8 +10,10 @@ import { Cron, Interval } from "@nestjs/schedule";
 import { HttpService } from "@nestjs/axios";
 import { IProject, IProjectCurrentOnline } from "src/shared/types";
 import { ServerService } from "src/server/server.service";
-
+import * as momenttz from 'moment-timezone';
+import * as moment from 'moment';
 import * as fs from 'fs'
+
 
 @Injectable()
 export class ProjectService {
@@ -21,10 +23,16 @@ export class ProjectService {
     private projectRepository: Repository<ProjectEntity>,
     @InjectRepository(TimestampProjectEntity)
     private timestampRepository: Repository<TimestampProjectEntity>,
+    @InjectRepository(ServerEntity)
+    private serverRepository: Repository<ServerEntity>,
     private readonly httpService: HttpService,
     @Inject(forwardRef(() => ServerService))
     private serverService: ServerService,
   ) { }
+
+  async findAllDB() {
+    return await this.projectRepository.find({ relations: ['timestamps', 'servers', 'servers.timestamps'] });
+  }
 
   async create(createProjectDto: CreateProjectDto) {
     const projectFromRagemp: IProject = await this.getProjectFromRagempByName(createProjectDto.projectName)
@@ -65,6 +73,10 @@ export class ProjectService {
       }
     })
 
+    if (!projectWithMaxLengthTimestamps || !maxLen) return {
+      message: "Проект создан"
+    };
+
     projectWithMaxLengthTimestamps.timestamps.forEach((stamp) => {
       const servStamp = this.timestampRepository.create({
         project: projectNew,
@@ -86,7 +98,7 @@ export class ProjectService {
     if (projectsFromRagemp) {
       return projectsFromRagemp.find(project => project.id === projectId)
     }
-    return;
+    return null;
   }
 
   async getProjectFromRagempByName(projectName: string): Promise<IProject> {
@@ -102,6 +114,34 @@ export class ProjectService {
       });
     }
     return;
+  }
+
+  async checkUpdateProjectData(): Promise<boolean> {
+    const getProjectsInfo = await this.getProjectsFromRagempByDatabase()
+    getProjectsInfo.forEach(async (project) => {
+      const proj = await this.projectRepository.save({
+        id: project.idInDatabase,
+        projectId: project.id
+      })
+      const findproj = await this.projectRepository.findOne({
+        where: {
+          id: project.idInDatabase,
+
+        }, relations: ["servers"]
+      })
+
+      project.servers.forEach(async (serv, index) => {
+        if (findproj.servers[index]) {
+          await this.serverRepository.save({
+            id: findproj.servers[index].id,
+            serverId: serv.id
+          })
+        }
+      })
+
+    })
+
+    return true
   }
 
   async getProjectsFromRagempByDatabase(): Promise<IProject[]> {
@@ -134,13 +174,17 @@ export class ProjectService {
   /**
    * сохраняет в бд пиковый онлайн проекта в 23:59:59 за этот день
    */
-  @Cron("59 59 23 * * * ", {
-    timeZone: "Europe/Moscow"
-  })
+  // @Cron("59 59 23 * * * ", {
+  //   timeZone: "Europe/Moscow"
+  // })
+  @Interval(1000)
   async savePeaksProjects() {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
-    const currentDate = new Date();
+    let currentDate = new Date().toString();
+    let mscDate = momenttz(new Date()).utcOffset(180).toString()
+    currentDate = mscDate;
+
     console.log('save');
 
     projectsFromRagemp.forEach(async (project) => {
@@ -160,9 +204,11 @@ export class ProjectService {
 
       this.timestampRepository.save(prj);
     });
+    this.savePeaksFile()
   }
 
-  @Interval(333333222)
+  // @Interval(1000 * 60 * 60 * 24)
+  @Interval(1000)
   async savePeaksFile() {
     let relationsArray = ["timestamps"];
 
@@ -252,7 +298,7 @@ export class ProjectService {
   }
 
 
-  @Interval(1000324432)
+  @Interval(1000)
   async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)

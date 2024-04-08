@@ -259,7 +259,7 @@ export class ProjectService {
       //@ts-ignore
       const onlineInfo: any[] = JSON.parse(onlineInfoFile)
 
-      if (!onlineInfo) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
+      if (!onlineInfo || onlineInfo.length < 1) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
 
       let projects: IProjectCurrentOnline[] = []
 

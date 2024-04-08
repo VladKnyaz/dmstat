@@ -2,7 +2,7 @@ import { Row, Col, Typography, Flex } from "antd";
 import { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
-import { useGetProjectsMainInfoQuery, useGetProjectsPeakQuery, useGetProjectsQuery } from "../../entities/projects";
+import { useGetProjectsMainInfoQuery, useGetProjectsPeakQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
 
 const ChartLinePeaks: FC = () => {
@@ -155,7 +155,7 @@ const ChartLinePeaks: FC = () => {
 
   const { data, isLoading, isSuccess } = useGetProjectsPeakQuery();
 
-  const { data: infoPorjects, isLoading: isLoadingInfo } = useGetProjectsMainInfoQuery();
+  const { data: infoPorjects } = useGetProjectsMainInfoQuery();
 
   useEffect(() => {
     if (data && infoPorjects) {

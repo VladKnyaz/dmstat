@@ -259,7 +259,7 @@ export class ProjectService {
       //@ts-ignore
       const onlineInfo: any[] = JSON.parse(onlineInfoFile)
 
-      if (!onlineInfo) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
+      if (!onlineInfo || onlineInfo.length < 1) throw new HttpException('Нет данных', HttpStatus.NOT_FOUND)
 
       let projects: IProjectCurrentOnline[] = []
 
@@ -267,6 +267,11 @@ export class ProjectService {
         let onlineIfnoLength = onlineInfo.length
 
         const projectName = project.projectName.replaceAll(' ', '_').toLocaleLowerCase()
+        console.log(projectName);
+        if (!projectName) {
+          console.log(onlineInfo[onlineIfnoLength - 1]);
+        }
+        console.log(onlineInfo[onlineIfnoLength - 1]);
 
         projects.push({
           projectName: project.projectName,

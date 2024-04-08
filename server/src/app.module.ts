@@ -31,12 +31,12 @@ import { UserEntity } from "./user/entities/user.entity";
         ProjectEntity,
         UserEntity
       ],
-      extra: {
-        poolSize: 20,
-        connectionTimeoutMillis: 2000,
-        query_timeout: 1000,
-        statement_timeout: 1000
-      },
+      // extra: {
+      //   poolSize: 20,
+      //   connectionTimeoutMillis: 2000,
+      //   query_timeout: 1000,
+      //   statement_timeout: 1000
+      // },
       synchronize: true, // убрать при продакшене
     }),
     ProjectModule,

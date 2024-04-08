@@ -15,7 +15,7 @@ import * as fs from 'fs'
 
 @Injectable()
 export class ProjectService {
-  private kek;
+
   constructor(
     @InjectRepository(ProjectEntity)
     private projectRepository: Repository<ProjectEntity>,
@@ -105,7 +105,7 @@ export class ProjectService {
   }
 
   async getProjectsFromRagempByDatabase(): Promise<IProject[]> {
-    const projects = await this.findAll();
+    const projects = await this.projectRepository.find({ relations: ['timestamps', 'servers', 'servers.timestamps'] });
     const projectsFromRagemp: IProject[] = await this.httpService.axiosRef
       .get("https://cdn.rage.mp/master/v2/")
       .then((res) => res.data);
@@ -115,8 +115,13 @@ export class ProjectService {
     let projectsRagemp: IProject[] = [];
     projects.forEach((projc) => {
 
-      let project: IProject = projectsFromRagemp.find((srv) => {
-        return srv.id === projc.projectId
+      let project: IProject = projectsFromRagemp.find((srvProject) => {
+        const namesrv = srvProject.servers[0].name;
+        const projname = projc.projectName.toLocaleLowerCase().split(' ')
+        const isEvery = projname.every(item => namesrv.toLocaleLowerCase().includes(item))
+
+        return isEvery
+        // return srvProject.id === projc.projectId
       });
 
       project &&
@@ -136,6 +141,8 @@ export class ProjectService {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
     const currentDate = new Date();
+    console.log('save');
+
     projectsFromRagemp.forEach(async (project) => {
       const projectFromDatabase = await this.projectRepository.findOne({
         where: {
@@ -155,6 +162,49 @@ export class ProjectService {
     });
   }
 
+  @Interval(333333222)
+  async savePeaksFile() {
+    let relationsArray = ["timestamps"];
+
+    let allProjectsData = await this.projectRepository.find({ relations: relationsArray });
+
+    let newDataProjectData = []
+
+    let arrTimestamps: number[] = [];
+
+    // Считаем самый большой отрезок времени
+    allProjectsData.forEach((project) => {
+      if (project.timestamps && project.timestamps.length > arrTimestamps.length) {
+        arrTimestamps = project.timestamps.map((stamp) => new Date(stamp.date).getTime());
+      }
+    });
+
+    arrTimestamps.forEach((currentTime) => {
+      let projects = {}
+      allProjectsData.forEach(project => {
+        const projectName = project.projectName.replaceAll(' ', '_').toLocaleLowerCase()
+
+        let peakProject: number = 0
+        let data = project.timestamps.find(ti => new Date(ti.date).getTime() === currentTime)
+        if (data) {
+          peakProject += data.peak
+        }
+
+        projects[projectName] = peakProject;
+      })
+
+      newDataProjectData.push({
+        time: new Date(currentTime),
+        ...projects
+      })
+    })
+
+
+    fs.writeFileSync('projectsInfoPeak.json', JSON.stringify(newDataProjectData))
+
+    return newDataProjectData
+  }
+
   async getProjectsCurrentOnline() {
     try {
       const projectsInDB = await this.findMainInfo();
@@ -169,26 +219,14 @@ export class ProjectService {
       let projects: IProjectCurrentOnline[] = []
 
       projectsInDB.forEach((project) => {
-        let online = 0;
-        let time: string;
-
         let onlineIfnoLength = onlineInfo.length
 
-        // project.servers.forEach((serv) => {
-        //   if (serv.timestamps.length < 1) {
-        //     online += 0
-        //     time = new Date().toString()
-        //     return
-        //   }
-
-        //   online = online + serv.timestamps[serv.timestamps.length - 1].amountPlayers
-        //   time = serv.timestamps[serv.timestamps.length - 1].date
-        // })
+        const projectName = project.projectName.replaceAll(' ', '_').toLocaleLowerCase()
 
         projects.push({
           projectName: project.projectName,
           projectId: project.projectId,
-          currentOnline: onlineInfo[onlineIfnoLength - 1][project.projectName],
+          currentOnline: onlineInfo[onlineIfnoLength - 1][projectName],
           time: onlineInfo[onlineIfnoLength - 1].time,
           color: project.color
         })
@@ -214,7 +252,7 @@ export class ProjectService {
   }
 
 
-  @Interval(1000 * 60 * 5)
+  @Interval(1000324432)
   async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)
@@ -240,15 +278,17 @@ export class ProjectService {
     arrTimestamps.forEach((currentTime) => {
       let projects = {}
       allProjectsData.forEach(project => {
-        let aa: number = 0
+        const projectName = project.projectName.replaceAll(' ', '_').toLocaleLowerCase()
+
+        let onlineOnProject: number = 0
         project.servers.forEach(server => {
           let data = server.timestamps.find(ti => new Date(ti.date).getTime() === currentTime)
           if (data) {
-            aa += data.amountPlayers
+            onlineOnProject += data.amountPlayers
           }
         })
 
-        projects[project.projectName] = aa;
+        projects[projectName] = onlineOnProject;
       })
 
       newDataProjectData.push({

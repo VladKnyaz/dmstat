@@ -108,7 +108,7 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
    */
-  @Interval(2 * 60 * 1000)
+  @Interval(1000)
   async saveTimestampServer() {
     const currentDate = new Date().toString()
     let test = momenttz(new Date()).utcOffset(180).toString()
@@ -119,9 +119,12 @@ export class ServerService {
     try {
       const projectsFromRagemp: IProject[] =
         await this.projectService.getProjectsFromRagempByDatabase();
+      console.log(projectsFromRagemp.length);//!!!!!!!!!!!!!!!!!!!!
+      // console.log(projectsFromRagemp);
 
       if (!projectsFromRagemp) return;
 
+      let serversTmpsData: any = []
 
       projectsFromRagemp.forEach(async (project) => {
         const findProjectInDatabase: ProjectEntity = await this.projectService.findOneById(
@@ -134,11 +137,16 @@ export class ServerService {
 
           let serverMp = project.servers.find(serv => serv.id === server.serverId)
 
-          let tmpstamp = this.timestampRepository.create({ date: currentDate, server, amountPlayers: serverMp.players.amount })
+          // serversTmpsData.push({ date: currentDate, server, amountPlayers: serverMp.players.amount })
+          await this.timestampRepository.save({ date: currentDate, server, amountPlayers: serverMp.players.amount })
 
-          await this.timestampRepository.save(tmpstamp);
+
+
         });
       });
+
+
+
     }
     catch (e) {
       console.log(e);

@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseGuards,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
@@ -38,8 +39,16 @@ export class ProjectController {
     const onlineInfoFile = fs.readFileSync('projectsInfo.json');
     //@ts-ignore
     return JSON.parse(onlineInfoFile)
+  }
+
+  @Get('/peak')
+  async findAllPeakjson() {
+    const peakInfoFile = fs.readFileSync('projectsInfoPeak.json');
+    //@ts-ignore
+    return JSON.parse(peakInfoFile)
 
   }
+
 
   @Get('/main')
   async findAllMainInfo() {
@@ -52,13 +61,15 @@ export class ProjectController {
     return await this.projectService.getProjectsCurrentOnline();
   }
 
+  @Delete("/delete")
+  remove(@Body() deleteProjectDto: DeleteProjectDto) {
+    return this.projectService.remove(deleteProjectDto.projectName);
+  }
+
   @Get(":projectName")
   async findOne(@Param("projectName") projectName: string) {
     return this.projectService.findOneByName(projectName);
   }
 
-  @Delete("/delete")
-  remove(@Body() deleteProjectDto: DeleteProjectDto) {
-    return this.projectService.remove(deleteProjectDto.projectName);
-  }
+
 }

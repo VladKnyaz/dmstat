@@ -15,10 +15,7 @@ const AddProject: FC = () => {
     });
   };
 
-  const createProject = async (data: {
-    projectName: string;
-    color: string;
-  }) => {
+  const createProject = async (data: { projectName: string; color: string }) => {
     let res = await addProject({
       color: data.color,
       projectName: data.projectName,
@@ -46,11 +43,13 @@ const AddProject: FC = () => {
             <a href="https://rage.mp/ru/servers" target="_blank">
               rage.mp
             </a>
+            <br />
+            Без (ОБТ) и т.п
           </>
         }
       >
         <Form.Item
-          label="Название проекта"
+          label="Название проекта (кратко)"
           name="projectName"
           rules={[{ required: true, message: "Название обязательно" }]}
         >
@@ -58,20 +57,11 @@ const AddProject: FC = () => {
         </Form.Item>
       </Tooltip>
 
-      <Form.Item
-        label="Цвет"
-        name="color"
-        rules={[{ required: true, message: "Цвет обязателен" }]}
-      >
+      <Form.Item label="Цвет" name="color" rules={[{ required: true, message: "Цвет обязателен" }]}>
         <Input placeholder="HEX цвет ( #fff )" />
       </Form.Item>
       <Form.Item>
-        <Button
-          htmlType="submit"
-          type="primary"
-          disabled={isError}
-          loading={isLoading}
-        >
+        <Button htmlType="submit" type="primary" disabled={isError} loading={isLoading}>
           Добавить
         </Button>
       </Form.Item>

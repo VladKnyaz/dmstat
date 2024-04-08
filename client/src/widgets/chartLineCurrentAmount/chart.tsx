@@ -84,12 +84,7 @@ const ChartLineCurrentAmount: FC = () => {
     },
     legend: {
       tooltipHoverFormatter: function (seriesName, opts) {
-        return (
-          seriesName +
-          " - <strong>" +
-          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
-          "</strong>"
-        );
+        return seriesName + " - <strong>" + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + "</strong>";
       },
       position: "top",
       markers: chartLineOptions.legend?.markers,
@@ -162,13 +157,11 @@ const ChartLineCurrentAmount: FC = () => {
     isRelations: true,
   });
 
-  const {
-    data: infoPorjects,
-  } = useGetProjectsMainInfoQuery();
+  const { data: infoPorjects, isLoading: isLoadingInfo } = useGetProjectsMainInfoQuery();
 
   useEffect(() => {
     if (data && infoPorjects) {
-      console.log(data);
+      if (data.length < 1 || infoPorjects.length < 1) return;
 
       let arrSeries: any = [];
       let arrTimestamps: number[] = data.map((project) => new Date(project.time).getTime());
@@ -185,22 +178,28 @@ const ChartLineCurrentAmount: FC = () => {
       setMinDate(minDated);
       if (datalength > 1) setMaxDate(maxDated);
 
-      infoPorjects.forEach((inPro) => {
+      infoPorjects.forEach((infProj) => {
         let players = data.map((project) => {
-          if (project[inPro.projectName]) return project[inPro.projectName];
+          const projectNameInfProj = String(infProj.projectName).replace(new RegExp(" ", "g"), "_").toLocaleLowerCase();
+
+          if (project[projectNameInfProj]) return project[projectNameInfProj];
           return 0;
         });
+
         arrSeries.push({
-          name: inPro.projectName,
+          name: infProj.projectName,
           data: players,
         });
       });
+      console.log(new Date(arrTimestamps[0]));
 
       setColors(arrColors);
       setSeries(arrSeries);
       setCategories(arrTimestamps);
     }
   }, [data, infoPorjects]);
+
+  if (isLoading || isLoadingInfo) return "Загрузка...";
 
   return (
     <Row>
@@ -210,8 +209,9 @@ const ChartLineCurrentAmount: FC = () => {
         </Flex>
 
         {isLoading && "Загрузка..."}
+        {isLoadingInfo && "Загрузка..."}
 
-        {isSuccess && (
+        {isSuccess && infoPorjects!.length > 1 && (
           <div className="chart" style={{ maxWidth: "100%" }}>
             <ApexChart options={chartOptions} series={series} height={500}></ApexChart>
             <ApexChart options={options2} series={series} height={100}></ApexChart>

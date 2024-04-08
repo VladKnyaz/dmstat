@@ -2,7 +2,7 @@ import { Row, Col, Typography, Flex } from "antd";
 import { FC, useState, useEffect } from "react";
 
 import ApexChart from "react-apexcharts";
-import { useGetProjectsQuery } from "../../entities/projects";
+import { useGetProjectsMainInfoQuery, useGetProjectsPeakQuery, useGetProjectsQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
 
 const ChartLinePeaks: FC = () => {
@@ -84,12 +84,7 @@ const ChartLinePeaks: FC = () => {
     },
     legend: {
       tooltipHoverFormatter: function (seriesName, opts) {
-        return (
-          seriesName +
-          " - <strong>" +
-          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
-          "</strong>"
-        );
+        return seriesName + " - <strong>" + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + "</strong>";
       },
       position: "top",
       markers: chartLineOptions.legend?.markers,
@@ -158,67 +153,48 @@ const ChartLinePeaks: FC = () => {
     },
   ]);
 
-  const { data, isLoading, isSuccess } = useGetProjectsQuery({
-    isRelations: true,
-  });
+  const { data, isLoading, isSuccess } = useGetProjectsPeakQuery();
+
+  const { data: infoPorjects, isLoading: isLoadingInfo } = useGetProjectsMainInfoQuery();
 
   useEffect(() => {
-    if (data) {
+    if (data && infoPorjects) {
+      if (data.length < 1 || infoPorjects.length < 1) return;
+
       let arrSeries: any = [];
-      let arrTimestamps: number[] = [];
+      let arrTimestamps: number[] = data.map((project) => new Date(project.time).getTime());
       let arrColors: string[] = [];
 
-      data.forEach((project) => {
-        //@ts-ignore
+      infoPorjects.forEach((project) => {
         arrColors.push(project.color);
+      });
 
-        if (
-          project.timestamps &&
-          //@ts-ignore
+      const datalength = data.length;
 
-          project.timestamps.length > arrTimestamps.length
-        ) {
-          //@ts-ignore
+      const minDated = new Date(data[0].time).getTime();
+      const maxDated = new Date(data[datalength - 1].time).getTime();
+      setMinDate(minDated);
+      if (datalength > 1) setMaxDate(maxDated);
 
-          arrTimestamps = project.timestamps.map((stamp) => new Date(stamp.date).getTime());
-          //@ts-ignore
+      infoPorjects.forEach((infProj) => {
+        let players = data.map((project) => {
+          const projectNameInfProj = String(infProj.projectName).replace(new RegExp(" ", "g"), "_").toLocaleLowerCase();
 
-          let lengthStamp = project.timestamps.length;
-          //@ts-ignore
-
-          const minDated = new Date(project.timestamps[0].date).getTime();
-          //@ts-ignore
-
-          const maxDated = new Date(project.timestamps[lengthStamp - 1].date).getTime();
-
-          setMinDate(minDated);
-
-          if (lengthStamp > 1) setMaxDate(maxDated);
-        }
-
-        let dataPeak: number[] = [];
-
-        arrTimestamps.forEach((mainStampTime) => {
-          //@ts-ignore
-
-          let timestampInProject = project.timestamps!.find(
-            //@ts-ignore
-
-            (tms) => new Date(tms.date).getTime() == mainStampTime
-          );
-          dataPeak.push(timestampInProject ? timestampInProject.peak : 0);
+          if (project[projectNameInfProj]) return project[projectNameInfProj];
+          return 0;
         });
 
         arrSeries.push({
-          name: project.projectName,
-          data: dataPeak,
+          name: infProj.projectName,
+          data: players,
         });
       });
+
       setColors(arrColors);
       setSeries(arrSeries);
       setCategories(arrTimestamps);
     }
-  }, [data]);
+  }, [data, infoPorjects]);
 
   return (
     <Row>

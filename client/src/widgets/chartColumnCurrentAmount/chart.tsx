@@ -12,14 +12,11 @@ const ChartColumnCurrentAmount: FC = () => {
 
   const [categories, setCategories] = useState<[string, string][]>([]);
   const [colors, setColors] = useState<string[]>();
-  const [series, setSeries] = useState<
-    ApexAxisChartSeries | ApexNonAxisChartSeries
-  >([]);
+  const [series, setSeries] = useState<ApexAxisChartSeries | ApexNonAxisChartSeries>([]);
   const [seriesPie, setSeriesPie] = useState<number[]>([]);
   const [allOnline, setAllOnline] = useState<number>(0);
 
-  const [projectInfo, setProjectInfo] =
-    useState<{ projectName: string; online: number }[]>();
+  const [projectInfo, setProjectInfo] = useState<{ projectName: string; online: number }[]>();
   const navigate = useNavigate();
 
   const chartOptions: ApexCharts.ApexOptions = {
@@ -79,11 +76,7 @@ const ChartColumnCurrentAmount: FC = () => {
     tooltip: { enabled: false },
   };
 
-  const {
-    data: dataCurrent,
-    isLoading,
-    isSuccess,
-  } = useGetProjectsCurrentQuery();
+  const { data: dataCurrent, isLoading, isSuccess } = useGetProjectsCurrentQuery();
 
   useEffect(() => {
     if (dataCurrent) {
@@ -96,11 +89,8 @@ const ChartColumnCurrentAmount: FC = () => {
 
       dataCurrent.forEach((project) => {
         arrColors.push(project.color);
-        time = moment.utc(project.time).format("HH:mm");
-        names.push([
-          project.projectName,
-          `В ${time}: ${project.currentOnline}`,
-        ]);
+        time = moment(project.time).format("HH:mm");
+        names.push([project.projectName, `В ${time}: ${project.currentOnline}`]);
 
         arrProjectInfo.push({
           projectName: project.projectName,
@@ -163,9 +153,7 @@ const ChartColumnCurrentAmount: FC = () => {
       : [],
     tooltip: {
       custom({ seriesIndex, w }) {
-        const percent = NumericArrayToPercantageArr(w.globals.initialSeries)[
-          seriesIndex
-        ];
+        const percent = NumericArrayToPercantageArr(w.globals.initialSeries)[seriesIndex];
 
         const data = w.globals.initialSeries[seriesIndex];
         const color = w.globals.colors[seriesIndex];
@@ -192,23 +180,13 @@ const ChartColumnCurrentAmount: FC = () => {
           {isLoading && "Загрузка..."}
           {isSuccess && (
             <div className="chart" style={{ maxWidth: "100%" }}>
-              <ApexChart
-                options={chartOptions}
-                series={series}
-                height={500}
-                type="bar"
-              ></ApexChart>
+              <ApexChart options={chartOptions} series={series} height={500} type="bar"></ApexChart>
               <Flex justify="center" gap="middle" vertical align="center">
                 <Title level={5}>Доля проекта от текущего онлайна</Title>
               </Flex>
 
               <div className="chartPieMain">
-                <ApexChart
-                  options={chartOptionsPie}
-                  series={seriesPie}
-                  height={300}
-                  type="pie"
-                ></ApexChart>
+                <ApexChart options={chartOptionsPie} series={seriesPie} height={300} type="pie"></ApexChart>
               </div>
             </div>
           )}

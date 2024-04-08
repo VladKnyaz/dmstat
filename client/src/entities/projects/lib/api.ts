@@ -65,6 +65,12 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
             }),
             providesTags: ['Project']
         }),
+        getProjectsPeak: builder.query<IProjectInfo[], void>({
+            query: () => ({
+                url: '/projects/peak',
+                method: 'GET',
+            }),
+        }),
         getProjectsMainInfo: builder.query<IProject[], void>({
             query: () => ({
                 url: '/projects/main',
@@ -110,4 +116,4 @@ const projectsApi = projectsApiWithTag.injectEndpoints({
 
 
 
-export const { useGetProjectsQuery, useAddProjectMutation, useDeleteProjectMutation, useGetProjectQuery, useGetProjectsCurrentQuery, useGetProjectsMainInfoQuery } = projectsApi;     
+export const { useGetProjectsQuery, useAddProjectMutation, useDeleteProjectMutation, useGetProjectQuery, useGetProjectsCurrentQuery, useGetProjectsMainInfoQuery, useGetProjectsPeakQuery } = projectsApi;     

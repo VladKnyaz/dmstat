@@ -89,7 +89,7 @@ const ChartColumnCurrentAmount: FC = () => {
 
       dataCurrent.forEach((project) => {
         arrColors.push(project.color);
-        time = moment(project.time).format("HH:mm");
+        time = moment.utc(project.time).format("HH:mm");
         names.push([project.projectName, `В ${time}: ${project.currentOnline}`]);
 
         arrProjectInfo.push({

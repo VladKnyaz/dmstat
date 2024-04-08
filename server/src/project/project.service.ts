@@ -267,6 +267,11 @@ export class ProjectService {
         let onlineIfnoLength = onlineInfo.length
 
         const projectName = project.projectName.replaceAll(' ', '_').toLocaleLowerCase()
+        console.log(projectName);
+        if (!projectName) {
+          console.log(onlineInfo[onlineIfnoLength - 1]);
+        }
+        console.log(onlineInfo[onlineIfnoLength - 1]);
 
         projects.push({
           projectName: project.projectName,

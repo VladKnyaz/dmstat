@@ -145,7 +145,7 @@ export class ProjectService {
   }
 
   async getProjectsFromRagempByDatabase(): Promise<IProject[]> {
-    const projects = await this.projectRepository.find({ relations: ['timestamps', 'servers', 'servers.timestamps'] });
+    const projects = await this.projectRepository.find({ relations: ['servers'] });
     const projectsFromRagemp: IProject[] = await this.httpService.axiosRef
       .get("https://cdn.rage.mp/master/v2/")
       .then((res) => res.data);

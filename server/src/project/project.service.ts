@@ -173,12 +173,12 @@ export class ProjectService {
   /**
    * сохраняет в бд пиковый онлайн проекта в 23:59:59 за этот день
    */
-  // @Cron("59 59 23 * * * ", {
-  //   timeZone: "Europe/Moscow"
-  // })
-  @Cron("* * 0/15 * * * ", {
+  @Cron("59 59 23 * * * ", {
     timeZone: "Europe/Moscow"
   })
+  // @Cron("* * 0/15 * * * ", {
+  //   timeZone: "Europe/Moscow"
+  // })
   async savePeaksProjects() {
     let a = await this.dataSource.query(`SET GLOBAL time_zone = '+03:00';`)
     let b = await this.dataSource.query(`SET time_zone = '+03:00';`)

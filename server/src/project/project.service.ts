@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from "@nestjs/common";
 import { CreateProjectDto } from "./dto/create-project.dto";
-import { UpdateProjectDto } from "./dto/update-project.dto";
 import { ProjectEntity } from "./entities/project.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -11,7 +10,6 @@ import { HttpService } from "@nestjs/axios";
 import { IProject, IProjectCurrentOnline } from "src/shared/types";
 import { ServerService } from "src/server/server.service";
 import * as momenttz from 'moment-timezone';
-import * as moment from 'moment';
 import * as fs from 'fs'
 
 
@@ -187,6 +185,7 @@ export class ProjectService {
     console.log(currentDate);
     let mscDate = momenttz(new Date()).utcOffset(180).toString()
     currentDate = mscDate;
+
 
     console.log('save');
     console.log(currentDate);

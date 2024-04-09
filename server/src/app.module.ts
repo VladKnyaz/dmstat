@@ -37,7 +37,7 @@ import { UserEntity } from "./user/entities/user.entity";
       //   query_timeout: 1000,
       //   statement_timeout: 1000
       // },
-      synchronize: true, // убрать при продакшене
+      synchronize: false, // убрать при продакшене
     }),
     ProjectModule,
     ServerModule,

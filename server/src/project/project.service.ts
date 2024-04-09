@@ -174,17 +174,22 @@ export class ProjectService {
   /**
    * сохраняет в бд пиковый онлайн проекта в 23:59:59 за этот день
    */
-  @Cron("59 59 23 * * * ", {
+  // @Cron("59 59 23 * * * ", {
+  //   timeZone: "Europe/Moscow"
+  // })
+  @Cron("* * 0/15 * * * ", {
     timeZone: "Europe/Moscow"
   })
   async savePeaksProjects() {
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
     let currentDate = new Date().toString();
+    console.log(currentDate);
     let mscDate = momenttz(new Date()).utcOffset(180).toString()
     currentDate = mscDate;
 
     console.log('save');
+    console.log(currentDate);
 
     projectsFromRagemp.forEach(async (project) => {
       const projectFromDatabase = await this.projectRepository.findOne({
@@ -207,7 +212,7 @@ export class ProjectService {
   }
 
   // @Interval(1000 * 60 * 60 * 24)
-  @Interval(60 * 1000 * 60 * 10)
+  @Interval(60 * 1000 * 60 * 3)
   async savePeaksFile() {
     let relationsArray = ["timestamps"];
 

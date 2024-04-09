@@ -123,10 +123,10 @@ export class ServerService {
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
    */
-  // @Interval(60 * 1000 * 2.5)
 
   private findServers: number = 0;
-  @Interval(1000)
+  // @Interval(1000)
+  @Interval(60 * 1000 * 2.5)
   async saveTimestampServer() {
     let currentDate = new Date().toString()
     let mscDate = momenttz(new Date()).utcOffset(180).toString()
@@ -149,8 +149,8 @@ export class ServerService {
         return
       }
 
+
       this.findServers = 0;
-      let serversTmpsData: any = []
 
       projectsFromRagemp.forEach(async (project) => {
         const findProjectInDatabase: ProjectEntity = await this.projectService.findOneById(

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from "@nest
 import { CreateProjectDto } from "./dto/create-project.dto";
 import { ProjectEntity } from "./entities/project.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { ServerEntity } from "src/server/entities/server.entity";
 import { TimestampProjectEntity } from "./entities/timestamp.entity";
 import { Cron, Interval } from "@nestjs/schedule";
@@ -17,6 +17,7 @@ import * as fs from 'fs'
 export class ProjectService {
 
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(ProjectEntity)
     private projectRepository: Repository<ProjectEntity>,
     @InjectRepository(TimestampProjectEntity)
@@ -172,19 +173,23 @@ export class ProjectService {
   /**
    * сохраняет в бд пиковый онлайн проекта в 23:59:59 за этот день
    */
-  @Cron("59 59 23 * * * ", {
-    timeZone: "Europe/Moscow"
-  })
-  // @Cron("* * 0/15 * * * ", {
+  // @Cron("59 59 23 * * * ", {
   //   timeZone: "Europe/Moscow"
   // })
+  @Cron("* * 0/15 * * * ", {
+    timeZone: "Europe/Moscow"
+  })
   async savePeaksProjects() {
+    let a = await this.dataSource.query(`SET GLOBAL time_zone = '+03:00';`)
+    let b = await this.dataSource.query(`SET time_zone = '+03:00';`)
+    console.log(b);
+
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
     let currentDate = new Date().toString();
     console.log(currentDate);
-    let mscDate = momenttz(new Date()).utcOffset(180).toString()
-    currentDate = mscDate;
+    // let mscDate = momenttz(new Date()).utcOffset(180).toString()
+    // currentDate = mscDate;
 
 
     console.log('save');

@@ -381,6 +381,7 @@ export class ProjectService {
   //   });
   // }
 
+  // @Interval(2000)
   @Interval(60 * 1000 * 14)
   public async saveServersOnlinesWithoutProjectTimestamps() {
     if (!fs.existsSync('projectsFiles')) {

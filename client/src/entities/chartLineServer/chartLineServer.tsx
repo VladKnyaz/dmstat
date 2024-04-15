@@ -3,10 +3,7 @@ import ApexChart from "react-apexcharts";
 import { IServer } from "../projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
 
-const ChartLineServer: FC<{ server: IServer; color: string }> = ({
-  server,
-  color,
-}) => {
+const ChartLineServer: FC<{ server: IServer; color: string }> = ({ server, color }) => {
   const [categories, setCategories] = useState<number[]>([]);
   const [minDate, setMinDate] = useState<number>();
   const [maxDate, setMaxDate] = useState<number>();
@@ -97,12 +94,7 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     },
     legend: {
       tooltipHoverFormatter: function (seriesName, opts) {
-        return (
-          seriesName +
-          " - <strong>" +
-          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] +
-          "</strong>"
-        );
+        return seriesName + " - <strong>" + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + "</strong>";
       },
       position: "top",
       markers: chartLineOptions.legend?.markers,
@@ -179,16 +171,14 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
       let dataAmountPlayers: number[] = [];
 
       if (server.timestamps) {
-        arrTimestamps = server.timestamps.map((stamp) =>
-          new Date(stamp.date).getTime()
-        );
+        arrTimestamps = server.timestamps.map((stamp) => new Date(stamp.date).getTime());
 
         let lengthStamp = server.timestamps.length;
 
-        const minDated = new Date(server.timestamps[0].date).getTime();
-        const maxDated = new Date(
-          server.timestamps[lengthStamp - 1].date
-        ).getTime();
+        let percentOnDateStamp10 = Math.floor((lengthStamp * 10) / 100);
+
+        const minDated = new Date(server.timestamps[lengthStamp - percentOnDateStamp10].date).getTime();
+        const maxDated = new Date(server.timestamps[lengthStamp - 1].date).getTime();
 
         setMinDate(minDated);
 
@@ -198,9 +188,7 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
       arrTimestamps.forEach((mainStampTime) => {
         let currentTimeOnline = 0;
 
-        let stmp = server.timestamps?.find(
-          (tms) => mainStampTime == new Date(tms.date).getTime()
-        );
+        let stmp = server.timestamps?.find((tms) => mainStampTime == new Date(tms.date).getTime());
 
         if (stmp) {
           currentTimeOnline += stmp ? stmp.amountPlayers : 0;
@@ -222,16 +210,8 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({
     <div className="chart" style={{ maxWidth: "100%" }}>
       {server && (
         <>
-          <ApexChart
-            options={chartOptions}
-            series={series}
-            height={400}
-          ></ApexChart>
-          <ApexChart
-            options={options2}
-            series={series}
-            height={100}
-          ></ApexChart>
+          <ApexChart options={chartOptions} series={series} height={400}></ApexChart>
+          <ApexChart options={options2} series={series} height={100}></ApexChart>
         </>
       )}
     </div>

@@ -145,7 +145,9 @@ export class ServerService {
 
       if ((!projectsFromRagemp || projectsFromRagemp.length !== prjectsLength) && this.findServers <= 7) {
         this.findServers += 1
-        this.saveTimestampServer()
+        setTimeout(() => {
+          this.saveTimestampServer()
+        }, 1000);
         return
       }
 

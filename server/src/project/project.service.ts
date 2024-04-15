@@ -176,18 +176,17 @@ export class ProjectService {
   @Cron("59 59 23 * * * ", {
     timeZone: "Europe/Moscow"
   })
-  // @Cron("* * 0/15 * * * ", {
+  // @Cron("0/1 * 15 * * * ", {
   //   timeZone: "Europe/Moscow"
   // })
   async savePeaksProjects() {
-    let a = await this.dataSource.query(`SET GLOBAL time_zone = '+03:00';`)
-    let b = await this.dataSource.query(`SET time_zone = '+03:00';`)
-    console.log(b);
+    let currentDate = new Date().toString();
+    // let a = await this.dataSource.query(`SET GLOBAL time_zone = '+03:00';`)
+    // let b = await this.dataSource.query(`SET time_zone = '+03:00';`)
+    // console.log(b);
 
     const projectsFromRagemp: IProject[] = await this.getProjectsFromRagempByDatabase();
     if (!projectsFromRagemp) return;
-    let currentDate = new Date().toString();
-    console.log(currentDate);
     // let mscDate = momenttz(new Date()).utcOffset(180).toString()
     // currentDate = mscDate;
 
@@ -212,10 +211,9 @@ export class ProjectService {
 
       this.timestampRepository.save(prj);
     });
-    this.savePeaksFile()
   }
 
-  // @Interval(1000 * 60 * 60 * 24)
+  // @Interval(1000)
   @Interval(60 * 1000 * 60 * 3)
   async savePeaksFile() {
     let relationsArray = ["timestamps"];
@@ -312,6 +310,8 @@ export class ProjectService {
 
 
   @Interval(60 * 1000 * 10)
+  // @Interval(1000)
+
   async findAll(isRelations: boolean = true) {
     const start = new Date()
     console.log("Start", start)

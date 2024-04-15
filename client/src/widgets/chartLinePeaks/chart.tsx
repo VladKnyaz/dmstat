@@ -160,6 +160,7 @@ const ChartLinePeaks: FC = () => {
   useEffect(() => {
     if (data && infoPorjects) {
       if (data.length < 1 || infoPorjects.length < 1) return;
+      console.log(data);
 
       let arrSeries: any = [];
       let arrTimestamps: number[] = data.map((project) => new Date(project.time).getTime());
@@ -189,6 +190,7 @@ const ChartLinePeaks: FC = () => {
           data: players,
         });
       });
+      console.log(arrTimestamps);
 
       setColors(arrColors);
       setSeries(arrSeries);

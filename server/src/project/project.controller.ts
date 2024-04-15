@@ -9,6 +9,8 @@ import {
   Query,
   UseGuards,
   UnauthorizedException,
+  HttpException,
+  HttpStatus,
 } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { CreateProjectDto } from "./dto/create-project.dto";
@@ -38,14 +40,28 @@ export class ProjectController {
   async findAlljson() {
     const onlineInfoFile = fs.readFileSync('projectsInfo.json');
     //@ts-ignore
-    return JSON.parse(onlineInfoFile)
+    const ans: any[] = JSON.parse(onlineInfoFile)
+
+    if (!ans || ans.length < 1) return [];
+    const startDateWeak = 12
+    var date = new Date(ans[ans.length - 1].time);
+
+    date.setDate(date.getDate() - startDateWeak);
+
+    return ans.filter((info) => {
+      if (new Date(info.time).getTime() >= date.getTime()) return info
+    })
   }
 
   @Get('/peak')
   async findAllPeakjson() {
     const peakInfoFile = fs.readFileSync('projectsInfoPeak.json');
     //@ts-ignore
-    return JSON.parse(peakInfoFile)
+    const ans: any[] = JSON.parse(peakInfoFile)
+
+    if (!ans || ans.length < 1) return [];
+
+    return ans
 
   }
 
@@ -68,7 +84,22 @@ export class ProjectController {
 
   @Get(":projectName")
   async findOne(@Param("projectName") projectName: string) {
-    return this.projectService.findOneByName(projectName);
+    try {
+      let projctName = projectName.replace(new RegExp(" ", "g"), "_").toLocaleLowerCase();
+
+      const serversOnline = fs.readFileSync(`projectsFiles/${projctName}.json`);
+      //@ts-ignore
+      const ans: any[] = JSON.parse(serversOnline)
+
+      if (!ans || ans.length < 1) return [];
+
+      return ans
+    } catch (e) {
+      console.log(e.message);
+
+      throw new HttpException('Файл не найден', HttpStatus.NOT_FOUND)
+
+    }
   }
 
 

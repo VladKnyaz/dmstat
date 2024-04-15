@@ -374,12 +374,60 @@ export class ProjectService {
     });
   }
 
-  findOneByName(projectName: string) {
-    return this.projectRepository.findOne({
-      where: { projectName },
-      relations: ["servers", "servers.timestamps", "timestamps"],
-    });
+  // findOneByNameWithoutProjectTimestamps(projectName: string) {
+  //   return this.projectRepository.findOne({
+  //     where: { projectName },
+  //     relations: ["servers", "servers.timestamps"],
+  //   });
+  // }
+
+  @Interval(60 * 1000 * 14)
+  public async saveServersOnlinesWithoutProjectTimestamps() {
+    if (!fs.existsSync('projectsFiles')) {
+      fs.mkdirSync('projectsFiles');
+    }
+
+    const allProjects = await this.projectRepository.find();
+    const startDateWeak = 12
+
+    allProjects.forEach(async (project) => {
+
+      let pro = await this.projectRepository.findOne({
+        where: { projectName: project.projectName },
+        relations: ["servers", "servers.timestamps"],
+      });
+
+      let newDataWithoutIdTimestamps = {
+        ...pro,
+        servers: pro.servers.map(ser => {
+          var date = new Date(ser.timestamps[ser.timestamps.length - 1].date);
+
+          date.setDate(date.getDate() - startDateWeak);
+
+          return {
+            ...ser,
+            timestamps: ser.timestamps.filter(stmp => {
+              if (new Date(stmp.date).getTime() >= date.getTime()) {
+                delete stmp.id;
+                return stmp
+              }
+
+            })
+          }
+        })
+      }
+
+      if (!newDataWithoutIdTimestamps) return
+
+      let projctName = project.projectName.replace(new RegExp(" ", "g"), "_").toLocaleLowerCase();
+
+      fs.writeFileSync(`projectsFiles/${projctName}.json`, JSON.stringify(newDataWithoutIdTimestamps))
+
+    })
+
+
   }
+
 
   async remove(projectName: string) {
     let project = await this.projectRepository.findOne({ where: { projectName } })

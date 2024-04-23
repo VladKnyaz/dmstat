@@ -141,7 +141,7 @@ export class ServerService {
     const newDate = new Date()
 
     let currentDate = newDate.toString()
-    currentDate = momenttz(newDate).utcOffset(180).toString()
+    currentDate = momenttz(newDate).utcOffset().toString()
 
     const prjectsLength: number = (await this.projectService.findMainInfo()).length
 

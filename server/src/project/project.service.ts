@@ -309,8 +309,8 @@ export class ProjectService {
   }
 
 
-  @Timeout(60 * 1000 * 0.2)
-  // @Interval(60 * 1000 * 10)
+  // @Timeout(60 * 1000 * 0.2)
+  @Interval(60 * 1000 * 10)
   // @Interval(1000)
 
   async findAll(isRelations: boolean = true) {

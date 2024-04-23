@@ -118,18 +118,6 @@ export class ServerService {
     }
   }
 
-  // @Interval(2000)
-  async checkTestTime() {
-    try {
-      console.log(new Date().toString());
-      console.log(new Date().toUTCString());
-      console.log(momenttz(new Date()).utcOffset(180).toString())
-      // let a = await this.timestampRepository.find({where:{}, take: 10, order:{id: 'DESC'} })
-      // console.log(a)
-    } catch(e){
-      console.log(e)
-    }
-  }
 
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
@@ -141,10 +129,7 @@ export class ServerService {
   async saveTimestampServer() {
     const newDate = new Date()
 
-    let currentDate =momenttz(new Date()).utcOffset(180).toString()
-    console.log('СОХРАНЯЮ СЕРВАРК', currentDate)
-    console.log(new Date().toString());
-    console.log(momenttz(new Date()).utcOffset(180))
+    let currentDate = newDate.toString();
     // currentDate = momenttz(newDate).utcOffset().toString()
 
     const prjectsLength: number = (await this.projectService.findMainInfo()).length

@@ -136,8 +136,9 @@ export class ServerService {
   // @Interval(1000)
   @Interval(60 * 1000 * 2.5)
   async saveTimestampServer() {
-    let currentDate = new Date().toString()
-    currentDate = momenttz(currentDate).utcOffset(180).toString()
+    const newDate = new Date()
+    let currentDate = newDate.toString()
+    // currentDate = momenttz(newDate).utcOffset(180).toString()
     const prjectsLength: number = (await this.projectService.findMainInfo()).length
 
     try {

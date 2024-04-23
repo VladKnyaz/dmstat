@@ -118,7 +118,15 @@ export class ServerService {
     }
   }
 
-
+  @Interval(2000)
+  async checkTestTime() {
+    try {
+      console.log(new Date());
+      console.log(momenttz(new Date()).utcOffset(180).toString())
+    } catch(e){
+      console.log(e)
+    }
+  }
 
   /**
    * сохраняет в бд онлайн серверов проектов раз в 2.5 минут

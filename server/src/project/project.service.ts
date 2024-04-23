@@ -5,7 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
 import { ServerEntity } from "src/server/entities/server.entity";
 import { TimestampProjectEntity } from "./entities/timestamp.entity";
-import { Cron, Interval } from "@nestjs/schedule";
+import {Cron, Interval, Timeout} from "@nestjs/schedule";
 import { HttpService } from "@nestjs/axios";
 import { IProject, IProjectCurrentOnline } from "src/shared/types";
 import { ServerService } from "src/server/server.service";
@@ -309,7 +309,7 @@ export class ProjectService {
   }
 
 
-  @Interval(60 * 1000 * 10)
+  @Timeout(60 * 1000 * 0.2)
   // @Interval(60 * 1000 * 10)
   // @Interval(1000)
 

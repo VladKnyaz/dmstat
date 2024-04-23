@@ -309,7 +309,8 @@ export class ProjectService {
   }
 
 
-  @Interval(60 * 1000 * 10)
+  @Interval(60 * 1000 * 1)
+  // @Interval(60 * 1000 * 10)
   // @Interval(1000)
 
   async findAll(isRelations: boolean = true) {

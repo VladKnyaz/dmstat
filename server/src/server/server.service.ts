@@ -140,8 +140,8 @@ export class ServerService {
   async saveTimestampServer() {
     const newDate = new Date()
 
-    let currentDate = newDate.toString()
-    currentDate = momenttz(newDate).utcOffset().toString()
+    let currentDate = newDate.toUTCString()
+    // currentDate = momenttz(newDate).utcOffset().toString()
 
     const prjectsLength: number = (await this.projectService.findMainInfo()).length
 

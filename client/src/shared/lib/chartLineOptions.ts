@@ -1,6 +1,7 @@
-import moment from "moment";
+import * as momenttz from "moment-timezone";
 import ApexCharts from 'apexcharts'
-
+momenttz.locale('RU-ru');
+momenttz.tz.setDefault("Europe/Moscow");
 export const chartLineOptions: ApexCharts.ApexOptions = {
     grid: {
         borderColor: "rgba(110,170,220,0.1)",
@@ -32,11 +33,11 @@ export const chartLineOptions: ApexCharts.ApexOptions = {
     xaxis: {
         tooltip: {
             formatter: (val: string) => {
-                return moment.utc(Number(val)).format("HH:mm:ss");
+                // return moment(val).format("HH:mm:ss");
+                return momenttz(val).format("HH:mm:ss")
             },
         },
         labels: {
-            datetimeUTC: false,
             datetimeFormatter: {
                 year: "yyyy",
                 month: "MMM 'yy",

@@ -11,7 +11,8 @@ import { IProject, IProjectCurrentOnline } from "src/shared/types";
 import { ServerService } from "src/server/server.service";
 import * as momenttz from 'moment-timezone';
 import * as fs from 'fs'
-
+momenttz.locale('RU-ru');
+momenttz.tz.setDefault("Europe/Moscow");
 
 @Injectable()
 export class ProjectService {
@@ -352,7 +353,7 @@ export class ProjectService {
       })
 
       newDataProjectData.push({
-        time: new Date(currentTime),
+        time: momenttz(new Date(currentTime)).toString(),
         ...projects
       })
     })

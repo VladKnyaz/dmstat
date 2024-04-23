@@ -123,7 +123,7 @@ export class ServerService {
     try {
       console.log(new Date().toString());
       console.log(momenttz(new Date()).utcOffset(180).toString())
-      let a = await this.timestampRepository.find({where:{}, take: -10 })
+      let a = await this.timestampRepository.find({where:{}, take: 10, order:{id: 'DESC'} })
       console.log(a)
     } catch(e){
       console.log(e)

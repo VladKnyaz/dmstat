@@ -123,6 +123,8 @@ export class ServerService {
     try {
       console.log(new Date().toString());
       console.log(momenttz(new Date()).utcOffset(180).toString())
+      let a = await this.timestampRepository.find({where:{}, take: 10 })
+      console.log(a)
     } catch(e){
       console.log(e)
     }
@@ -137,8 +139,10 @@ export class ServerService {
   @Interval(60 * 1000 * 2.5)
   async saveTimestampServer() {
     const newDate = new Date()
+
     let currentDate = newDate.toString()
     currentDate = momenttz(newDate).utcOffset(180).toString()
+
     const prjectsLength: number = (await this.projectService.findMainInfo()).length
 
     try {

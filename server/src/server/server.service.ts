@@ -166,6 +166,12 @@ export class ServerService {
 
           let serverMp = project.servers.find(serv => serv.id === server.serverId)
 
+          if (!serverMp || !serverMp.players) {
+            console.log(project.servers);
+            console.log(serverMp);
+
+            return;
+          }
           // serversTmpsData.push({ date: currentDate, server, amountPlayers: serverMp.players.amount })
           await this.timestampRepository.save({ date: currentDate, server, amountPlayers: serverMp.players.amount })
 

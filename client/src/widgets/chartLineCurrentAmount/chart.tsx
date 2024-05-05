@@ -1,9 +1,10 @@
 import { Row, Col, Typography, Flex } from "antd";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 
 import ApexChart from "react-apexcharts";
 import { useGetProjectsMainInfoQuery, useGetProjectsQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
+import moment from "moment";
 
 const ChartLineCurrentAmount: FC = () => {
   const { Title } = Typography;
@@ -12,6 +13,7 @@ const ChartLineCurrentAmount: FC = () => {
   const [minDate, setMinDate] = useState<number>();
   const [maxDate, setMaxDate] = useState<number>();
   const [colors, setColors] = useState<string[]>();
+  const diffDay=useRef<number>(30)
 
   const chartOptions: ApexCharts.ApexOptions = {
     chart: {
@@ -47,6 +49,7 @@ const ChartLineCurrentAmount: FC = () => {
       opacity: 1,
     },
     yaxis: chartLineOptions.yaxis,
+
     xaxis: {
       tooltip: chartLineOptions.xaxis?.tooltip,
       type: "datetime",
@@ -55,8 +58,24 @@ const ChartLineCurrentAmount: FC = () => {
         show: true,
         color: "gray",
       },
+      axisTicks: {
+        
+      },
 
-      labels: chartLineOptions.xaxis?.labels,
+      labels: {
+        showDuplicates:true,
+        trim:true,
+          formatter(value) {
+              const diffDayCurr= diffDay.current
+              
+              if (diffDayCurr < 4){
+                return moment(value).format("HH:mm:ss");
+              }
+              else {
+                return moment(value).format("DD MMMM");
+              }
+          },
+      },
     },
     tooltip: {
       custom({ dataPointIndex, w }) {
@@ -98,6 +117,18 @@ const ChartLineCurrentAmount: FC = () => {
       height: 130,
       width: 650,
       type: "line",
+      events: {
+        brushScrolled(_chart, {xaxis}) {
+          const diffTime = Math.abs(xaxis.max - xaxis.min);
+          
+          const diffDays = diffTime / (1000 * 60 * 60 * 24);
+          console.log(diffDays);
+          diffDay.current=diffDays
+            
+        },
+       
+        
+      },
       brush: {
         target: "charts23",
         enabled: true,
@@ -111,6 +142,7 @@ const ChartLineCurrentAmount: FC = () => {
         xaxis: {
           min: minDate,
           max: maxDate,
+          
         },
       },
       toolbar: {

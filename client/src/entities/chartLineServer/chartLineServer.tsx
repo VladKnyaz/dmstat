@@ -1,12 +1,14 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import ApexChart from "react-apexcharts";
 import { IServer } from "../projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
+import moment from "moment";
 
 const ChartLineServer: FC<{ server: IServer; color: string }> = ({ server, color }) => {
   const [categories, setCategories] = useState<number[]>([]);
   const [minDate, setMinDate] = useState<number>();
   const [maxDate, setMaxDate] = useState<number>();
+  const diffDay=useRef<number>(1)
 
   const chartOptions: ApexCharts.ApexOptions = {
     chart: {
@@ -76,7 +78,21 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({ server, color
         color: "gray",
       },
 
-      labels: chartLineOptions.xaxis?.labels,
+      // labels: chartLineOptions.xaxis?.labels,
+      labels: {
+        showDuplicates:true,
+        trim:true,
+          formatter(value) {
+              const diffDayCurr= diffDay.current
+              
+              if (diffDayCurr < 4){
+                return moment(value).format("HH:mm:ss");
+              }
+              else {
+                return moment(value).format("DD MMMM");
+              }
+          },
+      },
     },
     tooltip: {
       custom({ dataPointIndex, w }) {
@@ -111,7 +127,21 @@ const ChartLineServer: FC<{ server: IServer; color: string }> = ({ server, color
       brush: {
         target: server.serverId,
         enabled: true,
+      
       },
+      events: {
+        brushScrolled(_chart, {xaxis}) {
+          const diffTime = Math.abs(xaxis.max - xaxis.min);
+          
+          const diffDays = diffTime / (1000 * 60 * 60 * 24);
+          console.log(diffDays);
+          diffDay.current=diffDays
+            
+        },
+       
+
+      },
+
       selection: {
         enabled: true,
         fill: {

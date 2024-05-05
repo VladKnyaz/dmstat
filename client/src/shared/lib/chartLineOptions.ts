@@ -1,4 +1,5 @@
 import * as momenttz from "moment-timezone";
+import moment from "moment";
 import ApexCharts from 'apexcharts'
 momenttz.locale('RU-ru');
 momenttz.tz.setDefault("Europe/Moscow");
@@ -33,11 +34,20 @@ export const chartLineOptions: ApexCharts.ApexOptions = {
     xaxis: {
         tooltip: {
             formatter: (val: string) => {
-                // return moment(val).format("HH:mm:ss");
+                // console.log(new Date(val));
+
+                return moment(val).format("HH:mm:ss");
                 return momenttz(val).format("HH:mm:ss")
             },
         },
         labels: {
+            // formatter(value, timestamp, opts) {
+            //     // console.log(new Date(timestamp));
+
+            //     return moment(value).format("HH:mm:ss");
+            //     return momenttz(value).format("HH:mm:ss")
+            // },
+            datetimeUTC: false,
             datetimeFormatter: {
                 year: "yyyy",
                 month: "MMM 'yy",

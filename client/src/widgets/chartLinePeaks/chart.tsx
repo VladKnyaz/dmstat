@@ -4,6 +4,7 @@ import { FC, useState, useEffect } from "react";
 import ApexChart from "react-apexcharts";
 import { useGetProjectsMainInfoQuery, useGetProjectsPeakQuery } from "../../entities/projects";
 import { chartLineOptions } from "../../shared/lib/chartLineOptions";
+import moment from "moment";
 
 const ChartLinePeaks: FC = () => {
   const { Title } = Typography;
@@ -48,15 +49,25 @@ const ChartLinePeaks: FC = () => {
     },
     yaxis: chartLineOptions.yaxis,
     xaxis: {
-      tooltip: chartLineOptions.xaxis?.tooltip,
+      tooltip: {
+        formatter: (val: string) => {
+            return moment(val).format("DD MMMM HH:mm:ss");
+        },
+      },
       type: "datetime",
       categories: categories,
       axisBorder: {
         show: true,
         color: "gray",
       },
-
-      labels: chartLineOptions.xaxis?.labels,
+      labels: {
+        showDuplicates:true,
+        trim:true,
+          formatter(value) {
+            return moment(value).format("DD MMMM");
+              
+          },
+      },
     },
     tooltip: {
       custom({ dataPointIndex, w }) {
@@ -111,6 +122,7 @@ const ChartLinePeaks: FC = () => {
         xaxis: {
           min: minDate,
           max: maxDate,
+          
         },
       },
       toolbar: {
@@ -124,7 +136,12 @@ const ChartLinePeaks: FC = () => {
     xaxis: {
       type: "datetime",
       categories: categories,
-      labels: chartLineOptions.xaxis?.labels,
+      labels: {
+        formatter: (val: string) => {
+          return moment(val).format("DD MMMM");
+        },
+      },
+    
     },
     yaxis: {
       labels: {

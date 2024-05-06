@@ -120,13 +120,16 @@ export class ServerService {
 
 
   /**
-   * сохраняет в бд онлайн серверов проектов раз в 2.5 минут
+   * сохраняет в бд онлайн серверов проектов раз в 3.5 минут
    */
 
   private findServers: number = 0;
   // @Interval(1000)
-  @Interval(60 * 1000 * 2.5)
+  @Interval(60 * 1000 * 3.5)
   async saveTimestampServer() {
+    const isUpdated = await this.projectService.checkUpdateProjectData()
+    if (!isUpdated) return;
+
     const newDate = new Date()
 
     let currentDate = newDate.toString();

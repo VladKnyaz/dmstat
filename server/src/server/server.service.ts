@@ -83,7 +83,7 @@ export class ServerService {
    * Проверяет каждый час есть ли новый сервер
    */
   // @Interval(60 * 111 * 60)
-  @Interval(60 * 1000 * 60)
+  @Interval(864_000_000)
   async checkingAllServersThereAreInDatabase() {
     try {
 

@@ -384,7 +384,7 @@ export class ProjectService {
   // }
 
   // @Interval(2000)
-  @Interval(60 * 1000 * 14)
+  @Interval(60 * 1000 * 15)
   public async saveServersOnlinesWithoutProjectTimestamps() {
     if (!fs.existsSync('projectsFiles')) {
       fs.mkdirSync('projectsFiles');
@@ -420,9 +420,14 @@ export class ProjectService {
         })
       }
 
+      console.log(newDataWithoutIdTimestamps)
       if (!newDataWithoutIdTimestamps) return
 
       let projctName = project.projectName.replace(new RegExp(" ", "g"), "_").toLocaleLowerCase();
+
+      if (!fs.existsSync('projectsFiles')) {
+        fs.mkdirSync('projectsFiles');
+      }
 
       fs.writeFileSync(`projectsFiles/${projctName}.json`, JSON.stringify(newDataWithoutIdTimestamps))
 

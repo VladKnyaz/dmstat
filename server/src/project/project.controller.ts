@@ -87,6 +87,8 @@ export class ProjectController {
     try {
       let projctName = projectName.replace(new RegExp(" ", "g"), "_").toLocaleLowerCase();
 
+      if (!fs.existsSync('projectsFiles') || !fs.existsSync(`projectsFiles/${projctName}.json`)) return [];
+
       const serversOnline = fs.readFileSync(`projectsFiles/${projctName}.json`);
       //@ts-ignore
       const ans: any[] = JSON.parse(serversOnline)

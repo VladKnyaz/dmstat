@@ -14,10 +14,8 @@ export class AuthService {
 
     public async login(password: string) {
         const adminName = process.env.NAME_ADMIN || "admin4444"
-
         const user = await this.validateUser(adminName, password)
         if (!user) return new UnauthorizedException('Пользователь не найден')
-
         return this.genToken(user.id)
     }
 

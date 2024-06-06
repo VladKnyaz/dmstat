@@ -217,9 +217,10 @@ export class ProjectService {
   // @Interval(1000)
   @Interval(60 * 1000 * 60 * 3)
   async savePeaksFile() {
-    let relationsArray = ["timestamps"];
 
-    let allProjectsData = await this.projectRepository.find({ relations: relationsArray });
+    let allProjectsData = await this.projectRepository.find({ relations: {
+      timestamps: true
+      } });
 
     let newDataProjectData = []
 
@@ -260,6 +261,7 @@ export class ProjectService {
 
   async getProjectsCurrentOnline() {
     try {
+      console.time('getProjectsCurrentOnline')
       const projectsInDB = await this.findMainInfo();
       const onlineInfoFile = fs.readFileSync('projectsInfo.json');
 
@@ -293,6 +295,7 @@ export class ProjectService {
       let dataProjects: IProjectCurrentOnline[] = []
 
       dataProjects = projects.sort((ap, bp) => bp.currentOnline - ap.currentOnline)
+      console.timeEnd('getProjectsCurrentOnline')
 
       return dataProjects
     } catch (e) {
@@ -311,17 +314,19 @@ export class ProjectService {
 
 
   // @Timeout(60 * 1000 * 0.2)
-  @Interval(60 * 1000 * 10)
+  @Interval(60 * 1000 * 12)
   // @Interval(1000)
 
   async findAll(isRelations: boolean = true) {
-    const start = new Date()
-    console.log("Start", start)
-
-    let relationsArray = ["servers", "servers.timestamps", "timestamps"];
-
-    if (!isRelations) relationsArray = [];
-    let allProjectsData = await this.projectRepository.find({ relations: relationsArray });
+    // const start = new Date()
+    console.log("Start")
+    console.time("findAll")
+    let allProjectsData = await this.projectRepository.find({ relations: {
+      servers: {
+        timestamps:true
+      },
+      }
+    });
 
     let newDataProjectData = []
 
@@ -360,10 +365,11 @@ export class ProjectService {
 
     fs.writeFileSync('projectsInfo.json', JSON.stringify(newDataProjectData))
 
-    const finish = new Date()
-    console.log("Finish", finish)
-    //@ts-ignore
-    console.log("Time", `${finish - start}ms`)
+    // const finish = new Date()
+    // console.log("Finish", finish)
+    // //@ts-ignore
+    // console.log("Time", `${finish - start}ms`)
+    console.timeEnd("findAll")
 
     return newDataProjectData
 
@@ -375,13 +381,6 @@ export class ProjectService {
       relations: ["servers", "servers.timestamps", "timestamps"],
     });
   }
-
-  // findOneByNameWithoutProjectTimestamps(projectName: string) {
-  //   return this.projectRepository.findOne({
-  //     where: { projectName },
-  //     relations: ["servers", "servers.timestamps"],
-  //   });
-  // }
 
   // @Interval(2000)
   @Interval(60 * 1000 * 17)
@@ -397,7 +396,11 @@ export class ProjectService {
 
       let pro = await this.projectRepository.findOne({
         where: { projectName: project.projectName },
-        relations: ["servers", "servers.timestamps"],
+        relations: {
+          servers: {
+            timestamps: true
+          }
+        }
       });
 
       let newDataWithoutIdTimestamps = {
